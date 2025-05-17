@@ -2,9 +2,7 @@ import React from 'react';
 import { Navbar, Nav, NavItem, Container } from 'react-bootstrap';
 import { Outlet, Link } from 'react-router-dom';
 
-import {instance} from "../AxiosInterceptor.js";
-
-console.log(instance.user);
+import {client} from "../AxiosInterceptor.js";
 
 function Layout()
 {

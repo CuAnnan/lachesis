@@ -173,4 +173,4 @@ class AxiosInterceptor
 
 export default AxiosInterceptor;
 
-export const instance = new AxiosInterceptor({baseURL:conf.apiURL});
+export const client = new AxiosInterceptor({baseURL:conf.apiURL});
