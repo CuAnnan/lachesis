@@ -15,6 +15,7 @@ function Layout()
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Link to="/" className="nav-link">Home</Link>
+                            <Link to="/character" className="nav-link">Character</Link>
                         </Nav>
                         <Nav className="ml-auto">
                             User links
