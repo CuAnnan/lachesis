@@ -4,7 +4,7 @@ import http from 'http';
 import cors from 'cors';
 import MongoConnectionFactory from "./inc/MongoConnectionFactory.js";
 
-import conf from './conf.js';
+import conf from '../conf.js';
 MongoConnectionFactory.init(conf).then(() => {
     console.log('MongoConnectionFactory initialized');
 });
@@ -38,7 +38,8 @@ app.use(function(err, req, res, next) {
 
 
 const server = http.createServer(app);
-server.listen(conf.port);
+const port = conf.express.port;
+server.listen(port);
 server.on('error', (error)=>{
     if (error.syscall !== 'listen') {
         throw error;

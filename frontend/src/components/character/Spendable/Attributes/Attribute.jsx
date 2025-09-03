@@ -1,40 +1,19 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import SpendableRow from "../SpendableRow.jsx";
+import SpendableReducer from "../SpendableReducer.js";
 
-function Attribute({ attribute, useGroup, setAttributes }) {
-    function reducer(state, action) {
-        let newState;
-        switch (action.type) {
-            case 'setFP':
-                newState = { ...state, fp: action.fp };
-                break;
-            case 'setCP':
-                newState = { ...state, cp: action.cp };
-                break;
-            case 'setXP':
-                newState = { ...state, xp: action.xp };
-                break;
-            case 'load':
-                newState = action.payload;
-                break;
-            default:
-                return state;
-        }
+const COSTS = {
+    XP:4,
+    FP:4,
+    FIRST_LEVEL:0,
+    START_LEVEL:1,
+};
 
-        // Calculate level and xpToLevel
-        let level = 1 + Math.floor(newState.cp + newState.fp / 4);
-        let xp = newState.xp;
-        while (xp >= level * 4) {
-            xp -= level * 4;
-            level++;
-        }
-
-        newState.level = level;
-        newState.xpToLevel = level * 4;
-
-        return newState;
+function Attribute({ attribute, useGroup, setAttributes })
+{
+    const reducer = (state, action)=>
+    {
+        return SpendableReducer(state, action, COSTS.XP, COSTS.FP, COSTS.FIRST_LEVEL,COSTS.START_LEVEL);
     }
 
     const [state, dispatch] = React.useReducer(reducer, {});
@@ -58,34 +37,7 @@ function Attribute({ attribute, useGroup, setAttributes }) {
         });
     };
 
-    return (
-        <Row className="purchasable d-flex justify-content-center align-items-center">
-            <Col>{attribute.name}</Col>
-            <Col sm={2}>
-                <Form.Control
-                    type="text"
-                    value={state.cp?state.cp:0}
-                    onChange={e => handleChange('cp', e.target.value)}
-                />
-            </Col>
-            <Col sm={2}>
-                <Form.Control
-                    type="text"
-                    value={state.fp?state.fp:0}
-                    onChange={e => handleChange('fp', e.target.value)}
-                />
-            </Col>
-            <Col sm={2}>
-                <Form.Control
-                    type="text"
-                    value={state.xp?state.xp:0}
-                    onChange={e => handleChange('xp', e.target.value)}
-                />
-            </Col>
-            <Col sm={1}>{state.level?state.level:0}</Col>
-            <Col sm={1}>{state.xpToLevel?state.xpToLevel:4}</Col>
-        </Row>
-    );
+    return (<SpendableRow handleChange={handleChange} state={state}></SpendableRow>);
 }
 
 export default Attribute;

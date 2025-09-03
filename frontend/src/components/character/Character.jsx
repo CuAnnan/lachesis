@@ -1,4 +1,4 @@
-import React, { useReducer,useEffect, useState } from 'react';
+import React, { useReducer,useEffect} from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -7,14 +7,9 @@ import AbilityUseGroup from "./Spendable/Abilities/AbilityUseGroup.jsx";
 import Arts from './Spendable/Arts/Arts.jsx';
 import Realms from './Spendable/Realms/Realms.jsx';
 import { useParams } from "react-router-dom";
+import {client} from "../../AxiosInterceptor.js";
 
 import './Character.css';
-
-
-function updateCharacter(character)
-{
-    console.log(character);
-}
 
 function reducer(state, action)
 {
@@ -34,7 +29,6 @@ function reducer(state, action)
                     ),
                 },
             };
-            updateCharacter(newState);
             return newState;
         case 'updateAbility':
             newState = {
@@ -48,19 +42,19 @@ function reducer(state, action)
                     )
                 }
             };
-            updateCharacter(newState);
             return newState;
         case 'updateArt':
             newState = {
                 ...state,
                 arts:state.arts.map(art=>art.name === action.art ? {...art, [action.field]: action.value } : art),
             };
-            break;
+            return newState;
         case 'updateRealm':
             newState = {
-                ...state
+                ...state,
+                realms:state.realms.map(realm=> realm.name === action.realm ? {...realm, [action.field]: action.value } : realm),
             };
-            break;
+            return newState;
         default:
             return state;
     }
@@ -69,9 +63,7 @@ function reducer(state, action)
 function Character()
 {
     const {nanoid} = useParams();
-
-
-    const [state, dispatch] = useReducer(reducer, {
+    const initialState = {
         'attributes':{
             'Physical':[],
             'Social':[],
@@ -87,7 +79,8 @@ function Character()
         'merits':[],
         'flaws':[],
         'backgrounds':[]
-    });
+    };
+    const [state, dispatch] = useReducer(reducer, initialState);
 
 
     useEffect(()=>{
@@ -98,9 +91,9 @@ function Character()
         };
 
 
-        fetch(`http://localhost:3000/sheets/fetch/${nanoid?nanoid:''}`)
-            .then((response)=>response.json())
-            .then((json)=>{
+        client.get(`http://localhost:3000/sheets/fetch/${nanoid || ''}`)
+            .then(res=>{
+                let json = res.data;
                 const data = {
                     'attributes':{
                         'Physical':[],
@@ -112,11 +105,11 @@ function Character()
                         'Skill':[],
                         'Knowledge':[]
                     },
-                    arts:[],
-                    realms:[],
-                    merits:[],
-                    flaws:[],
-                    backgrounds:[]
+                    'arts':[],
+                    'realms':[],
+                    'merits':[],
+                    'flaws':[],
+                    'backgrounds':[]
                 };
                 for(let trait of json.traits)
                 {
@@ -147,6 +140,7 @@ function Character()
                             break;
                     }
                 }
+
                 dispatch({'type':'loadData', payload:data});
             });
 
@@ -190,6 +184,7 @@ function Character()
     const updateRealm = (realm, field, value)=>{
         dispatch({
             type:'updateRealm',
+            realm,
             field,
             value
         });

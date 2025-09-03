@@ -1,5 +1,6 @@
 import React from 'react';
 import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import Art from "./Art.jsx";
 
 function Arts({arts, setArt})
@@ -10,8 +11,10 @@ function Arts({arts, setArt})
         artRows.push(<Art key={art.name} art={art} setArt={setArt} />);
     }
 
-    return <Col>
-        <h2 className="text-center">Arts</h2>
+    return <Col className="useGroup realmUseGroup">
+        <Row>
+            <h2 className="text-center">Arts</h2>
+        </Row>
         {artRows}
     </Col>
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import conf from '../conf.js';
+import conf from '../../conf.js';
 
 /**
  * The basis for this code came from https://mihai-andrei.com/blog/jwt-authentication-using-axios-interceptors/
@@ -10,7 +10,6 @@ class AxiosInterceptor
     #axiosInstance;
     #isRefreshing = false;
     #refreshSubscribers = [];
-    static #classInstance = null;
 
     constructor(config = {})
     {

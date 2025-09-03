@@ -1,4 +1,5 @@
 import Controller from "./Controller.js";
+import blankSheetSchema from "../schema/blankSheetSchema.js";
 
 class SheetController extends Controller
 {
@@ -10,46 +11,31 @@ class SheetController extends Controller
         {
             throw new Error(`No sheet found for nanoid ${req.params.nanoid}`);
         }
-        res.json(sheetJSON.sheet);
+        res.status(200).json(sheetJSON.sheet);
     }
 
     async getBlankSheet(req, res)
     {
-        const sheetStructure = {
-            attributes:{
-                Physical:['Strength', 'Dexterity', 'Stamina'],
-                Social:['Charisma', 'Manipulation', 'Appearance'],
-                Mental:['Perception', 'Intelligence', 'Wits']
-            },
-            abilities:{
-                Talent:['Alertness','Athletics','Brawl','Empathy','Expression','Intimidation', 'Kenning','Leadership','Streetwise','Subterfuge'],
-                Skill:['Animal Ken','Crafts','Drive','Etiquette','Firearms','Larceny','Melee','Performance','Stealth','Survival'],
-                Knowledge:['Academics','Computer','Enigmas','Gremayre','Investigation','Law','Medicine','Politics','Science','Technology']
-            }
-        };
+        const sheetStructure = blankSheetSchema;
+
         const xp = 0, cp = 0, fp = 0;
-        let sheetJSON = {traits:[]};
 
-        for(let [useGroup, attributes] of Object.entries(sheetStructure.attributes))
-        {
-            for(let attribute of attributes)
-            {
-                sheetJSON.traits.push(
-                    {type:'Attribute', name:attribute, cp, xp, fp}
-                );
-            }
-        }
-        for(let [useGroup, abilities] of Object.entries(sheetStructure.abilities))
-        {
-            for(let ability of abilities)
-            {
-                sheetJSON.traits.push(
-                    {type:useGroup,name:ability,cp,xp,fp}
-                )
-            }
-        }
+        const sheetJSON = {};
 
-        res.json(sheetJSON);
+        sheetJSON.traits = [
+            ...Object.entries(sheetStructure.attributes).flatMap(([group, list])=>
+                list.map(name=>({type:'Attribute', name}))
+            ),
+            ...Object.entries(sheetStructure.abilities).flatMap(([group, list]) =>
+                list.map(name => ({ type: group, name }))
+            ),
+            ...sheetStructure.arts.map(art=>({type:'Art', name:art})),
+            ...sheetStructure.realms.map(realm => ({ type: 'Realm', name: realm }))
+        ].map(trait => ({ ...trait, cp, xp, fp }));
+
+
+
+        res.status(200).json(sheetJSON);
     }
 }
 
