@@ -12,14 +12,24 @@ function AttributeUseGroup({ useGroup, attributes, setAttributes }) {
                 key={attribute.name}
                 attribute={attribute}
                 useGroup={useGroup}
-                setAttributes={setAttributes} // Pass dispatch to Attribute
+                setAttributes={setAttributes} // Pass dispatch to Attributes
             />
         );
     }
 
     return (
-        <Col>
-            <h2 as={Row}>{useGroup}</h2>
+        <Col className="useGroup attributeUseGroup">
+            <Row>
+                <h2 className="text-center">{useGroup}</h2>
+            </Row>
+            <Row className="columnTitles text-center">
+                <Col></Col>
+                <Col sm={2}>CP</Col>
+                <Col sm={2}>FP</Col>
+                <Col sm={2}>XP</Col>
+                <Col sm={1}>lvl</Col>
+                <Col sm={1}>cost</Col>
+            </Row>
             {attributeRows}
         </Col>
     );

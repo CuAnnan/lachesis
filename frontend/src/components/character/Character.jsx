@@ -1,7 +1,15 @@
-import React, { useReducer } from 'react';
+import React, { useReducer,useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import AttributeUseGroup from './Spendable/Attribute/AttributeUseGroup.jsx';
+import Col from 'react-bootstrap/Col';
+import AttributeUseGroup from './Spendable/Attributes/AttributeUseGroup.jsx';
+import AbilityUseGroup from "./Spendable/Abilities/AbilityUseGroup.jsx";
+import Arts from './Spendable/Arts/Arts.jsx';
+import Realms from './Spendable/Realms/Realms.jsx';
+import { useParams } from "react-router-dom";
+
+import './Character.css';
+
 
 function updateCharacter(character)
 {
@@ -12,6 +20,8 @@ function reducer(state, action)
 {
     let newState;
     switch (action.type) {
+        case 'loadData':
+            return action.payload;
         case 'updateAttribute':
             newState =  {
                 ...state,
@@ -26,13 +36,13 @@ function reducer(state, action)
             };
             updateCharacter(newState);
             return newState;
-        case 'updateSkill':
+        case 'updateAbility':
             newState = {
                 ...state,
                 abilities:{
                     ...state.abilities,
                     [action.useGroup]:state.abilities[action.useGroup].map(skill=>
-                        skill.name === action.skillName
+                        skill.name === action.abilityName
                             ? { ...skill, [action.field]: action.value }
                             : skill
                     )
@@ -40,55 +50,166 @@ function reducer(state, action)
             };
             updateCharacter(newState);
             return newState;
+        case 'updateArt':
+            newState = {
+                ...state,
+                arts:state.arts.map(art=>art.name === action.art ? {...art, [action.field]: action.value } : art),
+            };
+            break;
+        case 'updateRealm':
+            newState = {
+                ...state
+            };
+            break;
         default:
             return state;
     }
 }
 
-function Character() {
-    const defaultState = {
-        attributes: {
-            Physical: [
-                { name: 'Strength'},
-                { name: 'Dexterity'},
-                { name: 'Stamina'},
-            ],
-            Social: [
-                { name: 'Charisma', cp: 0, fp: 0, xp: 0, level: 0 },
-                { name: 'Manipulation', cp: 0, fp: 0, xp: 0, level: 0 },
-                { name: 'Appearance', cp: 0, fp: 0, xp: 0, level: 0 },
-            ],
-            Mental: [
-                { name: 'Intelligence', cp: 0, fp: 0, xp: 0, level: 0 },
-                { name: 'Wits', cp: 0, fp: 0, xp: 0, level: 0 },
-                { name: 'Perception', cp: 0, fp: 0, xp: 0, level: 0 },
-            ],
-        },
-        abilities: {
-            Talents:[],
-            Skills:[],
-            Knowledges:[]
-        }
-    };
+function Character()
+{
+    const {nanoid} = useParams();
 
-    const [state, dispatch] = useReducer(reducer, defaultState);
+
+    const [state, dispatch] = useReducer(reducer, {
+        'attributes':{
+            'Physical':[],
+            'Social':[],
+            'Mental':[]
+        },
+        'abilities':{
+            'Talent':[],
+            'Skill':[],
+            'Knowledge':[]
+        },
+        'arts':[],
+        'realms':[],
+        'merits':[],
+        'flaws':[],
+        'backgrounds':[]
+    });
+
+
+    useEffect(()=>{
+        const attributeMap = {
+            'Strength':'Physical', 'Dexterity':'Physical', 'Stamina':'Physical',
+            'Charisma':'Social', 'Manipulation':'Social', 'Appearance':'Social',
+            'Intelligence':'Mental', 'Wits':'Mental', 'Perception':'Mental'
+        };
+
+
+        fetch(`http://localhost:3000/sheets/fetch/${nanoid?nanoid:''}`)
+            .then((response)=>response.json())
+            .then((json)=>{
+                const data = {
+                    'attributes':{
+                        'Physical':[],
+                        'Social':[],
+                        'Mental':[]
+                    },
+                    'abilities':{
+                        'Talent':[],
+                        'Skill':[],
+                        'Knowledge':[]
+                    },
+                    arts:[],
+                    realms:[],
+                    merits:[],
+                    flaws:[],
+                    backgrounds:[]
+                };
+                for(let trait of json.traits)
+                {
+                    switch(trait.type)
+                    {
+                        case 'Attribute':
+                            data.attributes[attributeMap[trait.name]].push(trait);
+                            break;
+                        case 'Talent':
+                        case 'Skill':
+                        case 'Knowledge':
+                            data.abilities[trait.type].push(trait);
+                            break;
+                        case 'Realm':
+                            data.realms.push(trait);
+                            break;
+                        case 'Art':
+                            data.arts.push(trait);
+                            break;
+                        case 'Background':
+                            data.backgrounds.push(trait);
+                            break;
+                        case 'Merit':
+                            data.merits.push(trait);
+                            break;
+                        case 'Flaw':
+                            data.flaws.push(trait);
+                            break;
+                    }
+                }
+                dispatch({'type':'loadData', payload:data});
+            });
+
+    },[nanoid]);
 
     const attributeCols = [];
-    for (const [useGroup, attributes] of Object.entries(state.attributes)) {
+    for (const [useGroup, attributes] of Object.entries(state.attributes))
+    {
         attributeCols.push(
             <AttributeUseGroup
                 key={useGroup}
                 useGroup={useGroup}
                 attributes={attributes}
-                setAttributes={dispatch} // Pass dispatch to AttributeUseGroup
+                setAttributes={dispatch}
             />
         );
     }
 
+    const abilityCols = [];
+    for(const [useGroup, abilities] of Object.entries(state.abilities))
+    {
+        abilityCols.push(
+            <AbilityUseGroup
+                key={useGroup}
+                useGroup={useGroup}
+                abilities={abilities}
+                setAbilities={dispatch}
+            />
+        );
+    }
+
+    const updateArt = (art, field, value)=>{
+        dispatch({
+            type:'updateArt',
+            art,
+            field,
+            value,
+        })
+    }
+
+    const updateRealm = (realm, field, value)=>{
+        dispatch({
+            type:'updateRealm',
+            field,
+            value
+        });
+    }
+
+
     return (
         <Container>
-            <h1>Attributes</h1>
+            <h1 className="text-center">Attributes</h1>
             <Row>{attributeCols}</Row>
+            <h1 className="text-center">Abilities</h1>
+            <Row>{abilityCols}</Row>
+            <h1 className="text-center">Advantages</h1>
+            <Row>
+                <Col>
+                    <h2 className="text-center">Backgrounds</h2>
+                </Col>
+                <Arts arts={state.arts} setArt={updateArt} />
+                <Realms realms={state.realms} setRealm={updateRealm} />
+            </Row>
         </Container>
     );
 }

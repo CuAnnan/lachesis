@@ -1,7 +1,7 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { Col } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
 
 function Attribute({ attribute, useGroup, setAttributes }) {
     function reducer(state, action) {
@@ -15,6 +15,9 @@ function Attribute({ attribute, useGroup, setAttributes }) {
                 break;
             case 'setXP':
                 newState = { ...state, xp: action.xp };
+                break;
+            case 'load':
+                newState = action.payload;
                 break;
             default:
                 return state;
@@ -30,10 +33,15 @@ function Attribute({ attribute, useGroup, setAttributes }) {
 
         newState.level = level;
         newState.xpToLevel = level * 4;
+
         return newState;
     }
 
-    const [state, dispatch] = React.useReducer(reducer, attribute);
+    const [state, dispatch] = React.useReducer(reducer, {});
+
+    React.useEffect(()=>{
+        dispatch({type:'load', payload:attribute});
+    },[]);
 
     const handleChange = (field, value) => {
         dispatch({
@@ -51,7 +59,7 @@ function Attribute({ attribute, useGroup, setAttributes }) {
     };
 
     return (
-        <Row>
+        <Row className="purchasable d-flex justify-content-center align-items-center">
             <Col>{attribute.name}</Col>
             <Col sm={2}>
                 <Form.Control
@@ -74,7 +82,8 @@ function Attribute({ attribute, useGroup, setAttributes }) {
                     onChange={e => handleChange('xp', e.target.value)}
                 />
             </Col>
-            <Col sm={2}>{state.level?state.level:0}</Col>
+            <Col sm={1}>{state.level?state.level:0}</Col>
+            <Col sm={1}>{state.xpToLevel?state.xpToLevel:4}</Col>
         </Row>
     );
 }

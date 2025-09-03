@@ -1,2 +1,4 @@
 .idea
 frontend/node_modules/
+/backend/conf.js
+backend/node_modules/
