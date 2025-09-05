@@ -2,7 +2,7 @@
 import express from 'express';
 import SheetController from "../Controllers/SheetController.js";
 
-const controller = new SheetController();
+const controller = SheetController.getInstance();
 
 const router = express.Router();
 
@@ -12,6 +12,10 @@ router.get('/fetch/:nanoid', async (req, res, next) => {
 
 router.get('/fetch/', async (req, res, next) => {
     controller.getBlankSheet(req, res).catch(next);
+});
+
+router.post('/', async(req, res, next)=>{
+    controller.saveSheet(req, res).catch(next);
 });
 
 export default router;

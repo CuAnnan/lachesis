@@ -1,37 +1,23 @@
-import React from 'react';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import Ability from './Ability.jsx';
+import CollapsibleGroup from "../CollapsibleGroup.jsx";
 
-function AbilityUseGroup({ useGroup, abilities, setAbilities }) {
-    const abilityRows = [];
-
-    for (const ability of abilities) {
-        abilityRows.push(
-            <Ability
-                key={ability.name}
-                ability={ability}
-                useGroup={useGroup}
-                setAbilities={setAbilities} // Pass dispatch to Attributes
-            />
-        );
-    }
-
+function AbilityUseGroup({ useGroup, abilities, setAbilities })
+{
     return (
-        <Col className="useGroup abilityUseGroup">
-            <Row>
-                <h2 className="text-center">{useGroup}s</h2>
-            </Row>
-            <Row className="columnTitles text-center">
-                <Col></Col>
-                <Col sm={2}>CP</Col>
-                <Col sm={2}>FP</Col>
-                <Col sm={2}>XP</Col>
-                <Col sm={1}>lvl</Col>
-                <Col sm={1}>cost</Col>
-            </Row>
-            {abilityRows}
-        </Col>
+        <CollapsibleGroup
+            title={useGroup}
+            className="abilityUseGroup"
+            renderItems={(collapsed)=> (
+                abilities.map((ability) => (
+                    <Ability
+                        key={ability.name}
+                        ability={ability}
+                        useGroup={useGroup}
+                        collapsed={collapsed}
+                        setAbilities={setAbilities}
+                    />
+                )))
+            }/>
     );
 }
 

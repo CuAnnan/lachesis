@@ -172,4 +172,4 @@ class AxiosInterceptor
 
 export default AxiosInterceptor;
 
-export const client = new AxiosInterceptor({baseURL:conf.apiURL});
+export const client = new AxiosInterceptor({baseURL:conf.express.url});

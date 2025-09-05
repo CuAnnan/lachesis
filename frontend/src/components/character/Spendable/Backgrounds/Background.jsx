@@ -3,13 +3,12 @@ import SpendableRow from '../SpendableRow.jsx'
 import SpendableReducer from "../SpendableReducer.js";
 
 const COSTS = {
-    XP:3,
+    XP:4,
     FP:2,
-    FIRST_LEVEL:5
+    FIRST_LEVEL:3
 };
 
-
-function Realm({realm, setRealm, collapsed})
+function Background({background, setBackground, collapsed})
 {
     const reducer = (state, action)=>
     {
@@ -19,7 +18,7 @@ function Realm({realm, setRealm, collapsed})
     const [state, dispatch] = React.useReducer(reducer, {});
 
     React.useEffect(()=>{
-        dispatch({type:'load', payload:realm});
+        dispatch({type:'load', payload:background});
     }, []);
 
     const handleChange = (field, value) => {
@@ -28,10 +27,10 @@ function Realm({realm, setRealm, collapsed})
             [field]: value ? parseInt(value) : 0,
         });
 
-        setRealm(realm.name, field, value);
+        setBackground(background.name, field, value);
     };
 
     return (<SpendableRow handleChange={handleChange} state={state} collapsed={collapsed}/>);
 }
 
-export default Realm;
+export default Background;

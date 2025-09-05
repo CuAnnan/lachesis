@@ -1,9 +1,10 @@
-import React, { useReducer,useEffect} from 'react';
+import {useReducer, useEffect, useState, useCallback, useMemo} from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import AttributeUseGroup from './Spendable/Attributes/AttributeUseGroup.jsx';
 import AbilityUseGroup from "./Spendable/Abilities/AbilityUseGroup.jsx";
+import Backgrounds from './Spendable/Backgrounds/Backgrounds.jsx';
 import Arts from './Spendable/Arts/Arts.jsx';
 import Realms from './Spendable/Realms/Realms.jsx';
 import { useParams } from "react-router-dom";
@@ -13,13 +14,17 @@ import './Character.css';
 
 function reducer(state, action)
 {
-    let newState;
+    if(action.value)
+    {
+        action.value = parseInt(action.value);
+    }
     switch (action.type) {
         case 'loadData':
-            return action.payload;
+            return { ...state, loading: false, error: null, ...action.payload };
         case 'updateAttribute':
-            newState =  {
+            return {
                 ...state,
+                hasChanges:true,
                 attributes: {
                     ...state.attributes,
                     [action.useGroup]: state.attributes[action.useGroup].map(attribute =>
@@ -29,10 +34,10 @@ function reducer(state, action)
                     ),
                 },
             };
-            return newState;
         case 'updateAbility':
-            newState = {
+            return {
                 ...state,
+                hasChanges:true,
                 abilities:{
                     ...state.abilities,
                     [action.useGroup]:state.abilities[action.useGroup].map(skill=>
@@ -42,75 +47,74 @@ function reducer(state, action)
                     )
                 }
             };
-            return newState;
         case 'updateArt':
-            newState = {
+            return {
                 ...state,
+                hasChanges:true,
                 arts:state.arts.map(art=>art.name === action.art ? {...art, [action.field]: action.value } : art),
             };
-            return newState;
         case 'updateRealm':
-            newState = {
+            return {
                 ...state,
+                hasChanges:true,
                 realms:state.realms.map(realm=> realm.name === action.realm ? {...realm, [action.field]: action.value } : realm),
             };
-            return newState;
+        case 'hasDirty':
+            return {
+                ...state,
+                hasChanges:false
+            }
         default:
             return state;
     }
 }
 
-function Character()
-{
-    const {nanoid} = useParams();
-    const initialState = {
-        'attributes':{
-            'Physical':[],
-            'Social':[],
-            'Mental':[]
-        },
-        'abilities':{
-            'Talent':[],
-            'Skill':[],
-            'Knowledge':[]
-        },
+const blankSheet = ()=>{
+    return {
+        loading:true,
+        error:null,
+        'attributes':{'Physical':[],'Social':[],'Mental':[]},
+        'abilities':{'Talent':[],'Skill':[],'Knowledge':[]},
         'arts':[],
         'realms':[],
         'merits':[],
         'flaws':[],
         'backgrounds':[]
     };
+};
+
+const attributeMap = {
+    'Strength':'Physical', 'Dexterity':'Physical', 'Stamina':'Physical',
+    'Charisma':'Social', 'Manipulation':'Social', 'Appearance':'Social',
+    'Intelligence':'Mental', 'Wits':'Mental', 'Perception':'Mental'
+};
+
+function flattenSheet(sheet)
+{
+    return [
+        ...Object.values(sheet?.attributes ?? {}).flatMap(g => g),
+        ...Object.values(sheet?.abilities ?? {}).flatMap(g => g),
+        ...Object.values(sheet?.arts ?? {}).flat(),
+        ...Object.values(sheet?.realms ?? {}).flat(),
+    ];
+}
+
+function Character()
+{
+    const {nanoid} = useParams();
+    const initialState = blankSheet();
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [saveRequest, setSaveRequest] = useState(null);
 
 
     useEffect(()=>{
-        const attributeMap = {
-            'Strength':'Physical', 'Dexterity':'Physical', 'Stamina':'Physical',
-            'Charisma':'Social', 'Manipulation':'Social', 'Appearance':'Social',
-            'Intelligence':'Mental', 'Wits':'Mental', 'Perception':'Mental'
-        };
-
-
-        client.get(`http://localhost:3000/sheets/fetch/${nanoid || ''}`)
+        client.get(`/sheets/fetch/${nanoid || ''}`)
             .then(res=>{
                 let json = res.data;
-                const data = {
-                    'attributes':{
-                        'Physical':[],
-                        'Social':[],
-                        'Mental':[]
-                    },
-                    'abilities':{
-                        'Talent':[],
-                        'Skill':[],
-                        'Knowledge':[]
-                    },
-                    'arts':[],
-                    'realms':[],
-                    'merits':[],
-                    'flaws':[],
-                    'backgrounds':[]
-                };
+                const data = blankSheet();
+                delete data.loading;
+                delete data.error;
+
                 for(let trait of json.traits)
                 {
                     switch(trait.type)
@@ -140,55 +144,65 @@ function Character()
                             break;
                     }
                 }
-
                 dispatch({'type':'loadData', payload:data});
+            }).catch(error=>{
+                console.error(error);
             });
 
     },[nanoid]);
 
-    const attributeCols = [];
-    for (const [useGroup, attributes] of Object.entries(state.attributes))
-    {
-        attributeCols.push(
-            <AttributeUseGroup
-                key={useGroup}
-                useGroup={useGroup}
-                attributes={attributes}
-                setAttributes={dispatch}
-            />
-        );
-    }
+    useEffect(()=>{
+        if(state.loading || saveRequest || !state.hasChanges)
+        {
+            return;
+        }
+        console.log(state);
+        let request = client.post('/sheets', {sheet:{traits:flattenSheet(state)}})
+            .then(response=>{
+                console.log(response.data);
+                dispatch({ type: 'resetDirty' });
+                setSaveRequest(null);
+            })
+            .catch(error=>{
+                console.error(error);
+            });
+        setSaveRequest(request);
+    }, [state]);
 
-    const abilityCols = [];
-    for(const [useGroup, abilities] of Object.entries(state.abilities))
-    {
-        abilityCols.push(
-            <AbilityUseGroup
-                key={useGroup}
-                useGroup={useGroup}
-                abilities={abilities}
-                setAbilities={dispatch}
-            />
-        );
-    }
+    const updateArt = useCallback((art, field, value)=>{
+        dispatch({type:'updateArt',art,field,value,})
+    },[]);
 
-    const updateArt = (art, field, value)=>{
-        dispatch({
-            type:'updateArt',
-            art,
-            field,
-            value,
-        })
-    }
+    const updateRealm = useCallback((realm, field, value)=>{
+        dispatch({type:'updateRealm',realm,field,value});
+    });
 
-    const updateRealm = (realm, field, value)=>{
-        dispatch({
-            type:'updateRealm',
-            realm,
-            field,
-            value
-        });
-    }
+    const attributeCols =useMemo(
+        () =>
+            Object.entries(state.attributes).map(([useGroup, attributes]) => (
+                <AttributeUseGroup
+                    key={useGroup}
+                    useGroup={useGroup}
+                    attributes={attributes}
+                    setAttributes={dispatch}
+                />
+            )),
+        [state.attributes]
+    );
+
+    const abilityCols = useMemo(
+        () =>
+            Object.entries(state.abilities).map(([useGroup, abilities]) => (
+                <AbilityUseGroup
+                    key={useGroup}
+                    useGroup={useGroup}
+                    abilities={abilities}
+                    setAbilities={dispatch}
+                />
+            )),
+        [state.abilities]
+    );
+
 
 
     return (
@@ -200,7 +214,7 @@ function Character()
             <h1 className="text-center">Advantages</h1>
             <Row>
                 <Col>
-                    <h2 className="text-center">Backgrounds</h2>
+                    <Row><Backgrounds backgrounds={state.backgrounds}/></Row>
                 </Col>
                 <Arts arts={state.arts} setArt={updateArt} />
                 <Realms realms={state.realms} setRealm={updateRealm} />

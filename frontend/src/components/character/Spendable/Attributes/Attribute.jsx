@@ -5,11 +5,10 @@ import SpendableReducer from "../SpendableReducer.js";
 const COSTS = {
     XP:4,
     FP:4,
-    FIRST_LEVEL:0,
     START_LEVEL:1,
 };
 
-function Attribute({ attribute, useGroup, setAttributes })
+function Attribute({ attribute, useGroup, setAttributes, collapsed })
 {
     const reducer = (state, action)=>
     {
@@ -37,7 +36,7 @@ function Attribute({ attribute, useGroup, setAttributes })
         });
     };
 
-    return (<SpendableRow handleChange={handleChange} state={state}></SpendableRow>);
+    return (<SpendableRow collapsed={collapsed} handleChange={handleChange} state={state}></SpendableRow>);
 }
 
 export default Attribute;

@@ -1,11 +1,27 @@
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from 'react-bootstrap/Tooltip';
 
-function SpendableRow({state, handleChange})
+import './SpendableRow.css';
+
+function SpendableRow({state, handleChange, collapsed})
 {
-    return <Row className="purchasable d-flex justify-content-center align-items-center">
-        <Col>{state.name}</Col>
+    let stateNameColumn = state.specialty?<OverlayTrigger
+        placement="top"
+        overlay={<Tooltip id={`tt-${state.id}`}>{state.specialty}</Tooltip>}
+    >
+        <Col className="stateName">
+            {state.name + (state.specialty?" *":"")}
+        </Col>
+    </OverlayTrigger>:<Col className="stateName">
+        {state.name + (state.specialty?" *":"")}
+    </Col>;
+
+
+    return ((collapsed&&state.level===0)?<></>:<Row className="purchasable d-flex justify-content-center align-items-center">
+        {stateNameColumn}
         <Col sm={2}>
             <Form.Control
                 type="text"
@@ -27,9 +43,9 @@ function SpendableRow({state, handleChange})
                 onChange={e => handleChange('xp', e.target.value)}
             />
         </Col>
-        <Col sm={1}>{state.level?state.level:0}</Col>
         <Col sm={1}>{state.xpToLevel?state.xpToLevel:4}</Col>
-    </Row>;
+        <Col sm={1}>{state.level?state.level:0}</Col>
+    </Row>);
 }
 
 export default SpendableRow;

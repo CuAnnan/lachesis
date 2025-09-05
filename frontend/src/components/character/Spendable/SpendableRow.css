@@ -1,0 +1,7 @@
+.stateName {
+    /* Let the column shrink but never grow beyond this limit */
+    max-width: 200px;               /* adjust to suit your design */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;           /* keep everything on one line */
+}

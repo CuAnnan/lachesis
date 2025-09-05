@@ -4,10 +4,10 @@ import http from 'http';
 import cors from 'cors';
 import MongoConnectionFactory from "./inc/MongoConnectionFactory.js";
 
-import conf from '../conf.js';
-MongoConnectionFactory.init(conf).then(() => {
-    console.log('MongoConnectionFactory initialized');
-});
+ import conf from '../conf.js';
+ MongoConnectionFactory.init(conf).then(() => {
+     console.log('MongoConnectionFactory initialized');
+ });
 
 
 const app = express();

@@ -8,15 +8,14 @@ const COSTS = {
     FIRST_LEVEL:3
 };
 
-function Ability({ ability, useGroup, setAbilities })
+function Ability({ ability, useGroup, setAbilities, collapsed })
 {
     const reducer = (state, action)=>
     {
        return SpendableReducer(state, action, COSTS.XP, COSTS.FP, COSTS.FIRST_LEVEL);
     }
-
-
     const [state, dispatch] = React.useReducer(reducer, {});
+
     React.useEffect(()=>{
         dispatch({type:'load', payload:ability});
     }, []);
@@ -36,7 +35,7 @@ function Ability({ ability, useGroup, setAbilities })
         });
     };
 
-    return (<SpendableRow handleChange={handleChange} state={state}></SpendableRow>);
+    return (<SpendableRow collapsed={collapsed} handleChange={handleChange} state={state}></SpendableRow>);
 }
 
 export default Ability;

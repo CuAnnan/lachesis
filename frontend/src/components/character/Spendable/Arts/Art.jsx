@@ -2,11 +2,18 @@ import React from 'react';
 import SpendableRow from '../SpendableRow.jsx';
 import SpendableReducer from "../SpendableReducer.js";
 
-function Art({art, setArt})
+const COSTS = {
+    XP:4,
+    FP:4,
+    FIRST_LEVEL:7
+};
+
+function Art({art, setArt, collapsed})
 {
+
     const reducer = (state, action)=>
     {
-        return SpendableReducer(state, action, 4, 5, 7);
+        return SpendableReducer(state, action, COSTS.XP, COSTS.FP, COSTS.FIRST_LEVEL);
     }
 
     const [state, dispatch] = React.useReducer(reducer, {});
@@ -24,7 +31,7 @@ function Art({art, setArt})
         setArt(art.name, field, value);
     };
 
-    return (<SpendableRow state={state} handleChange={handleChange}/>);
+    return (<SpendableRow state={state} handleChange={handleChange} collapsed={collapsed} />);
 }
 
 export default Art;

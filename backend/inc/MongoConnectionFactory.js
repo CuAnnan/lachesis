@@ -1,6 +1,5 @@
 import {MongoClient} from 'mongodb';
 
-
 class MongoConnectionFactory
 {
     static #instantiated;
