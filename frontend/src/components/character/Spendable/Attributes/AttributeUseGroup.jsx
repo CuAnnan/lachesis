@@ -1,7 +1,7 @@
 import CollapsibleGroup from "../CollapsibleGroup.jsx";
 import Attribute from "./Attribute.jsx";
 
-function AttributeUseGroup({ useGroup, attributes, setAttributes })
+function AttributeUseGroup({ useGroup, attributes, setAttribute })
 {
     return (
         <CollapsibleGroup
@@ -14,7 +14,7 @@ function AttributeUseGroup({ useGroup, attributes, setAttributes })
                         attribute={attribute}
                         useGroup={useGroup}
                         collapsed={collapsed}
-                        setAbilities={setAttributes}
+                        setAttribute={setAttribute}
                     />
                 )))
             }/>

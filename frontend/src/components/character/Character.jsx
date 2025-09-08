@@ -11,13 +11,10 @@ import { useParams } from "react-router-dom";
 import {client} from "../../AxiosInterceptor.js";
 
 import './Character.css';
+import CharacterDetails from "./CharacterDetails/CharacterDetails.jsx";
 
 function reducer(state, action)
 {
-    if(action.value)
-    {
-        action.value = parseInt(action.value);
-    }
     switch (action.type) {
         case 'loadData':
             return { ...state, loading: false, error: null, ...action.payload };
@@ -28,7 +25,7 @@ function reducer(state, action)
                 attributes: {
                     ...state.attributes,
                     [action.useGroup]: state.attributes[action.useGroup].map(attribute =>
-                        attribute.name === action.attributeName
+                        attribute.name === action.name
                             ? { ...attribute, [action.field]: action.value }
                             : attribute
                     ),
@@ -79,15 +76,34 @@ function reducer(state, action)
                 hasChanges:true,
                 backgrounds:state.backgrounds.map(background=>background.id === action.backgroundId ? {...background, [action.field]: action.value} : background),
             }
+        case "updateCharacterDetail":
+            return {
+                ...state,
+                [action.field]:action.value
+            }
         default:
             return state;
     }
 }
 
-const blankSheet = () => ({
+const blankSheet = (json) => (
+    {
     loading: true,
     error: null,
     hasChanges: false,
+
+    player:json?.player,
+    chronicle:json?.chronicle,
+    kith:json?.kith,
+    house:json?.house,
+    name:json?.name,
+    court:json?.court,
+    legacies:{seelie:json?.legacies?.seelie ?? '', unseelie:json?.legacies?.unseelie ?? ''},
+    seeming:json?.seeming,
+    motley:json?.motley,
+    secondOathSworn:!!(json?.secondOathSworn),
+    glamourSpent:Number(json?.glamourSpent ?? 0),
+    willpowerSpent:Number(json?.willpowerSpent ?? 0),
     attributes: { Physical: [], Social: [], Mental: [] },
     abilities: { Talent: [], Skill: [], Knowledge: [] },
     arts: [],
@@ -129,7 +145,7 @@ function Character()
         client.get(`/sheets/fetch/${nanoid || ''}`)
             .then(res=>{
                 let json = res.data;
-                const data = blankSheet();
+                const data = blankSheet(json);
                 delete data.loading;
                 delete data.error;
 
@@ -194,13 +210,34 @@ function Character()
     },[]);
 
     const addBackground = useCallback((background)=>{
-        background.id = backgroundId.current++;
-        dispatch({type:"addBackground", background});
-    }, [])
+        dispatch({
+            type:"addBackground",
+            background:{
+                ...background,
+                id:backgroundId.current++
+            }
+        });
+    }, []);
+
+    const setAttribute = useCallback((useGroup, name, field, value)=>{
+        dispatch({type:"updateAttribute", useGroup, name, field, value});
+    }, []);
+
+    const setAbility = useCallback((useGroup, name, field, value)=>{
+        dispatch({type:"updateAbility", useGroup, name, field, value});
+    }, []);
 
     const updateBackground = useCallback((backgroundId, field, value)=>{
         dispatch({type:"updateBackground", backgroundId, field, value});
-    },[])
+    },[]);
+
+    const updateCharacterDetail = useCallback((field, value)=>{
+        dispatch({type:"updateCharacterDetail", field, value})
+    }, []);
+
+    const updateLegacy=(court, legacy)=>{
+        dispatch({type:"updateLegacy", court, legacy})
+    }
 
     const attributeCols =useMemo(
         () =>
@@ -209,10 +246,10 @@ function Character()
                     key={useGroup}
                     useGroup={useGroup}
                     attributes={attributes}
-                    setAttributes={dispatch}
+                    setAttribute={setAttribute}
                 />
             )),
-        [state.attributes]
+        [state.attributes, setAttribute]
     );
 
     const abilityCols = useMemo(
@@ -222,16 +259,19 @@ function Character()
                     key={useGroup}
                     useGroup={useGroup}
                     abilities={abilities}
-                    setAbilities={dispatch}
+                    setAbility={setAbility}
                 />
             )),
-        [state.abilities]
+        [state.abilities, setAbility]
     );
+
+
 
 
 
     return (
         <Container>
+            <CharacterDetails state={state} updateCharacterDetail={updateCharacterDetail} updateLegacy={updateLegacy}/>
             <h1 className="text-center">Attributes</h1>
             <Row>{attributeCols}</Row>
             <h1 className="text-center">Abilities</h1>

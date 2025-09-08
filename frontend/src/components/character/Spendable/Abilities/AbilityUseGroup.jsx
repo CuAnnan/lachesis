@@ -1,7 +1,7 @@
 import Ability from './Ability.jsx';
 import CollapsibleGroup from "../CollapsibleGroup.jsx";
 
-function AbilityUseGroup({ useGroup, abilities, setAbilities })
+function AbilityUseGroup({ useGroup, abilities, setAbility })
 {
     return (
         <CollapsibleGroup
@@ -14,7 +14,7 @@ function AbilityUseGroup({ useGroup, abilities, setAbilities })
                         ability={ability}
                         useGroup={useGroup}
                         collapsed={collapsed}
-                        setAbilities={setAbilities}
+                        setAbility={setAbility}
                     />
                 )))
             }/>

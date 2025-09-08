@@ -8,7 +8,7 @@ const COSTS = {
     START_LEVEL:1,
 };
 
-function Attribute({ attribute, useGroup, setAttributes, collapsed })
+function Attribute({ attribute, useGroup, setAttribute, collapsed })
 {
     const reducer = (state, action)=>
     {
@@ -19,21 +19,14 @@ function Attribute({ attribute, useGroup, setAttributes, collapsed })
 
     React.useEffect(()=>{
         dispatch({type:'load', payload:attribute});
-    },[]);
+    },[attribute]);
 
     const handleChange = (field, value) => {
         dispatch({
             type: `set${field.toUpperCase()}`,
-            [field]: value ? parseInt(value) : 0,
+            [field]: Number(value),
         });
-
-        setAttributes({
-            type: 'updateAttribute',
-            useGroup,
-            attributeName: attribute.name,
-            field,
-            value: value ? parseInt(value) : 0,
-        });
+        setAttribute(useGroup, attribute.name, field, Number(value));
     };
 
     return (<SpendableRow collapsed={collapsed} handleChange={handleChange} state={state}></SpendableRow>);

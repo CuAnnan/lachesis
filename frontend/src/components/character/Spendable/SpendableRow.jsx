@@ -26,21 +26,21 @@ function SpendableRow({state, handleChange, collapsed})
             <Form.Control
                 type="text"
                 value={state.cp?state.cp:0}
-                onChange={e => handleChange('cp', e.target.value)}
+                onChange={e => handleChange('cp', Number(e.target.value))}
             />
         </Col>
         <Col sm={2}>
             <Form.Control
                 type="text"
                 value={state.fp?state.fp:0}
-                onChange={e => handleChange('fp', e.target.value)}
+                onChange={e => handleChange('fp', Number(e.target.value))}
             />
         </Col>
         <Col sm={2}>
             <Form.Control
                 type="text"
                 value={state.xp?state.xp:0}
-                onChange={e => handleChange('xp', e.target.value)}
+                onChange={e => handleChange('xp', Number(e.target.value))}
             />
         </Col>
         <Col sm={1}>{state.xpToLevel?state.xpToLevel:4}</Col>
