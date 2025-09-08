@@ -271,6 +271,7 @@ function Character()
 
     return (
         <Container>
+            <h1 className="text-center">Personal Details</h1>
             <CharacterDetails state={state} updateCharacterDetail={updateCharacterDetail} updateLegacy={updateLegacy}/>
             <h1 className="text-center">Attributes</h1>
             <Row>{attributeCols}</Row>
