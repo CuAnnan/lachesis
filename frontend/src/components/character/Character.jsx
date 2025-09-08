@@ -1,4 +1,4 @@
-import {useReducer, useEffect, useState, useCallback, useMemo} from 'react';
+import {useReducer, useEffect, useState, useCallback, useMemo, useRef} from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -59,29 +59,43 @@ function reducer(state, action)
                 hasChanges:true,
                 realms:state.realms.map(realm=> realm.name === action.realm ? {...realm, [action.field]: action.value } : realm),
             };
-        case 'hasDirty':
+        case 'resetDirty':
             return {
                 ...state,
                 hasChanges:false
+            }
+        case 'addBackground':
+            return {
+                ...state,
+                hasChanges:true,
+                backgrounds:[
+                    ...state.backgrounds,
+                    action.background
+                ]
+            }
+        case "updateBackground":
+            return {
+                ...state,
+                hasChanges:true,
+                backgrounds:state.backgrounds.map(background=>background.id === action.backgroundId ? {...background, [action.field]: action.value} : background),
             }
         default:
             return state;
     }
 }
 
-const blankSheet = ()=>{
-    return {
-        loading:true,
-        error:null,
-        'attributes':{'Physical':[],'Social':[],'Mental':[]},
-        'abilities':{'Talent':[],'Skill':[],'Knowledge':[]},
-        'arts':[],
-        'realms':[],
-        'merits':[],
-        'flaws':[],
-        'backgrounds':[]
-    };
-};
+const blankSheet = () => ({
+    loading: true,
+    error: null,
+    hasChanges: false,
+    attributes: { Physical: [], Social: [], Mental: [] },
+    abilities: { Talent: [], Skill: [], Knowledge: [] },
+    arts: [],
+    realms: [],
+    merits: [],
+    flaws: [],
+    backgrounds: [],
+});
 
 const attributeMap = {
     'Strength':'Physical', 'Dexterity':'Physical', 'Stamina':'Physical',
@@ -94,8 +108,11 @@ function flattenSheet(sheet)
     return [
         ...Object.values(sheet?.attributes ?? {}).flatMap(g => g),
         ...Object.values(sheet?.abilities ?? {}).flatMap(g => g),
-        ...Object.values(sheet?.arts ?? {}).flat(),
-        ...Object.values(sheet?.realms ?? {}).flat(),
+        ...Object.values(sheet?.arts ?? []),
+        ...Object.values(sheet?.realms ?? []),
+        ...Object.values(sheet?.backgrounds ?? []),
+        ...Object.values(sheet?.merits ?? []),
+        ...Object.values(sheet?.flaws ?? []),
     ];
 }
 
@@ -105,6 +122,7 @@ function Character()
     const initialState = blankSheet();
     const [state, dispatch] = useReducer(reducer, initialState);
     const [saveRequest, setSaveRequest] = useState(null);
+    const backgroundId = useRef(1);
 
 
     useEffect(()=>{
@@ -134,6 +152,7 @@ function Character()
                             data.arts.push(trait);
                             break;
                         case 'Background':
+                            trait.id = backgroundId.current++;
                             data.backgrounds.push(trait);
                             break;
                         case 'Merit':
@@ -151,31 +170,37 @@ function Character()
 
     },[nanoid]);
 
-    useEffect(()=>{
-        if(state.loading || saveRequest || !state.hasChanges)
-        {
-            return;
-        }
-        console.log(state);
-        let request = client.post('/sheets', {sheet:{traits:flattenSheet(state)}})
-            .then(response=>{
-                console.log(response.data);
+    useEffect(() => {
+        if (state.loading || saveRequest || !state.hasChanges) return;
+
+        const request = client
+            .post('/sheets', { sheet: { traits: flattenSheet(state) } })
+            .then(resp => {
+                console.log('Saved:', resp.data);
                 dispatch({ type: 'resetDirty' });
-                setSaveRequest(null);
             })
-            .catch(error=>{
-                console.error(error);
-            });
+            .catch(err => console.error('Save error:', err))
+            .finally(() => setSaveRequest(null));
+
         setSaveRequest(request);
-    }, [state]);
+    }, [state, saveRequest]);
 
     const updateArt = useCallback((art, field, value)=>{
-        dispatch({type:'updateArt',art,field,value,})
+        dispatch({type:'updateArt',art,field,value,});
     },[]);
 
     const updateRealm = useCallback((realm, field, value)=>{
         dispatch({type:'updateRealm',realm,field,value});
-    });
+    },[]);
+
+    const addBackground = useCallback((background)=>{
+        background.id = backgroundId.current++;
+        dispatch({type:"addBackground", background});
+    }, [])
+
+    const updateBackground = useCallback((backgroundId, field, value)=>{
+        dispatch({type:"updateBackground", backgroundId, field, value});
+    },[])
 
     const attributeCols =useMemo(
         () =>
@@ -214,7 +239,7 @@ function Character()
             <h1 className="text-center">Advantages</h1>
             <Row>
                 <Col>
-                    <Row><Backgrounds backgrounds={state.backgrounds}/></Row>
+                    <Row><Backgrounds backgrounds={state.backgrounds} setBackground={updateBackground} updateBackground={updateBackground} addBackground={addBackground}/></Row>
                 </Col>
                 <Arts arts={state.arts} setArt={updateArt} />
                 <Realms realms={state.realms} setRealm={updateRealm} />

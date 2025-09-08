@@ -8,7 +8,7 @@ const COSTS = {
     FIRST_LEVEL:3
 };
 
-function Background({background, setBackground, collapsed})
+function Background({background, updateBackground, collapsed})
 {
     const reducer = (state, action)=>
     {
@@ -19,7 +19,7 @@ function Background({background, setBackground, collapsed})
 
     React.useEffect(()=>{
         dispatch({type:'load', payload:background});
-    }, []);
+    }, [background]);
 
     const handleChange = (field, value) => {
         dispatch({
@@ -27,7 +27,7 @@ function Background({background, setBackground, collapsed})
             [field]: value ? parseInt(value) : 0,
         });
 
-        setBackground(background.name, field, value);
+        updateBackground(background.id, field, value);
     };
 
     return (<SpendableRow handleChange={handleChange} state={state} collapsed={collapsed}/>);

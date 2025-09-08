@@ -2,6 +2,9 @@ function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, start
 {
     let newState;
     switch (action.type) {
+        case 'setNAME':
+            newState = {...state, name: action.name};
+            break;
         case 'setFP':
             newState = { ...state, fp: action.fp };
             break;
