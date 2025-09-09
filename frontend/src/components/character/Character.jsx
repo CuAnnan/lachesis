@@ -9,128 +9,13 @@ import Arts from './Spendable/Arts/Arts.jsx';
 import Realms from './Spendable/Realms/Realms.jsx';
 import { useParams } from "react-router-dom";
 import {client} from "../../AxiosInterceptor.js";
+import Instructions from './Instructions.jsx';
 
 import './Character.css';
 import CharacterDetails from "./CharacterDetails/CharacterDetails.jsx";
+import {CharacterDispatchers} from "./CharacterDispatchers.js";
 
-function reducer(state, action)
-{
-    switch (action.type) {
-        case 'loadData':
-            return { ...state, loading: false, error: null, ...action.payload };
-        case 'updateAttribute':
-            return {
-                ...state,
-                hasChanges:true,
-                attributes: {
-                    ...state.attributes,
-                    [action.useGroup]: state.attributes[action.useGroup].map(attribute =>
-                        attribute.name === action.name
-                            ? { ...attribute, [action.field]: action.value }
-                            : attribute
-                    ),
-                },
-            };
-        case 'updateAbility':
-            return {
-                ...state,
-                hasChanges:true,
-                abilities:{
-                    ...state.abilities,
-                    [action.useGroup]:state.abilities[action.useGroup].map(skill=>
-                        skill.name === action.abilityName
-                            ? { ...skill, [action.field]: action.value }
-                            : skill
-                    )
-                }
-            };
-        case 'updateArt':
-            return {
-                ...state,
-                hasChanges:true,
-                arts:state.arts.map(art=>art.name === action.art ? {...art, [action.field]: action.value } : art),
-            };
-        case 'updateRealm':
-            return {
-                ...state,
-                hasChanges:true,
-                realms:state.realms.map(realm=> realm.name === action.realm ? {...realm, [action.field]: action.value } : realm),
-            };
-        case 'resetDirty':
-            return {
-                ...state,
-                hasChanges:false
-            }
-        case 'addBackground':
-            return {
-                ...state,
-                hasChanges:true,
-                backgrounds:[
-                    ...state.backgrounds,
-                    action.background
-                ]
-            }
-        case "updateBackground":
-            return {
-                ...state,
-                hasChanges:true,
-                backgrounds:state.backgrounds.map(background=>background.id === action.backgroundId ? {...background, [action.field]: action.value} : background),
-            }
-        case "updateCharacterDetail":
-            return {
-                ...state,
-                [action.field]:action.value
-            }
-        default:
-            return state;
-    }
-}
-
-const blankSheet = (json) => (
-    {
-    loading: true,
-    error: null,
-    hasChanges: false,
-
-    player:json?.player,
-    chronicle:json?.chronicle,
-    kith:json?.kith,
-    house:json?.house,
-    name:json?.name,
-    court:json?.court,
-    legacies:{seelie:json?.legacies?.seelie ?? '', unseelie:json?.legacies?.unseelie ?? ''},
-    seeming:json?.seeming,
-    motley:json?.motley,
-    secondOathSworn:!!(json?.secondOathSworn),
-    glamourSpent:Number(json?.glamourSpent ?? 0),
-    willpowerSpent:Number(json?.willpowerSpent ?? 0),
-    attributes: { Physical: [], Social: [], Mental: [] },
-    abilities: { Talent: [], Skill: [], Knowledge: [] },
-    arts: [],
-    realms: [],
-    merits: [],
-    flaws: [],
-    backgrounds: [],
-});
-
-const attributeMap = {
-    'Strength':'Physical', 'Dexterity':'Physical', 'Stamina':'Physical',
-    'Charisma':'Social', 'Manipulation':'Social', 'Appearance':'Social',
-    'Intelligence':'Mental', 'Wits':'Mental', 'Perception':'Mental'
-};
-
-function flattenSheet(sheet)
-{
-    return [
-        ...Object.values(sheet?.attributes ?? {}).flatMap(g => g),
-        ...Object.values(sheet?.abilities ?? {}).flatMap(g => g),
-        ...Object.values(sheet?.arts ?? []),
-        ...Object.values(sheet?.realms ?? []),
-        ...Object.values(sheet?.backgrounds ?? []),
-        ...Object.values(sheet?.merits ?? []),
-        ...Object.values(sheet?.flaws ?? []),
-    ];
-}
+import {reducer, attributeMap, flattenSheet, blankSheet} from "./CharacterReducer.js";
 
 function Character()
 {
@@ -138,8 +23,17 @@ function Character()
     const initialState = blankSheet();
     const [state, dispatch] = useReducer(reducer, initialState);
     const [saveRequest, setSaveRequest] = useState(null);
-    const backgroundId = useRef(1);
-
+    const {
+        updateArt,
+        updateRealm,
+        addBackground,
+        setAttribute,
+        setAbility,
+        updateBackground,
+        updateCharacterDetail,
+        updateLegacy,
+        getNextBackgroundId,
+    } = CharacterDispatchers(dispatch);
 
     useEffect(()=>{
         client.get(`/sheets/fetch/${nanoid || ''}`)
@@ -168,7 +62,7 @@ function Character()
                             data.arts.push(trait);
                             break;
                         case 'Background':
-                            trait.id = backgroundId.current++;
+                            trait.id = getNextBackgroundId();
                             data.backgrounds.push(trait);
                             break;
                         case 'Merit':
@@ -201,44 +95,6 @@ function Character()
         setSaveRequest(request);
     }, [state, saveRequest]);
 
-    const updateArt = useCallback((art, field, value)=>{
-        dispatch({type:'updateArt',art,field,value,});
-    },[]);
-
-    const updateRealm = useCallback((realm, field, value)=>{
-        dispatch({type:'updateRealm',realm,field,value});
-    },[]);
-
-    const addBackground = useCallback((background)=>{
-        dispatch({
-            type:"addBackground",
-            background:{
-                ...background,
-                id:backgroundId.current++
-            }
-        });
-    }, []);
-
-    const setAttribute = useCallback((useGroup, name, field, value)=>{
-        dispatch({type:"updateAttribute", useGroup, name, field, value});
-    }, []);
-
-    const setAbility = useCallback((useGroup, name, field, value)=>{
-        dispatch({type:"updateAbility", useGroup, name, field, value});
-    }, []);
-
-    const updateBackground = useCallback((backgroundId, field, value)=>{
-        dispatch({type:"updateBackground", backgroundId, field, value});
-    },[]);
-
-    const updateCharacterDetail = useCallback((field, value)=>{
-        dispatch({type:"updateCharacterDetail", field, value})
-    }, []);
-
-    const updateLegacy=(court, legacy)=>{
-        dispatch({type:"updateLegacy", court, legacy})
-    }
-
     const attributeCols =useMemo(
         () =>
             Object.entries(state.attributes).map(([useGroup, attributes]) => (
@@ -270,20 +126,30 @@ function Character()
 
 
     return (
-        <Container>
-            <h1 className="text-center">Personal Details</h1>
-            <CharacterDetails state={state} updateCharacterDetail={updateCharacterDetail} updateLegacy={updateLegacy}/>
-            <h1 className="text-center">Attributes</h1>
-            <Row>{attributeCols}</Row>
-            <h1 className="text-center">Abilities</h1>
-            <Row>{abilityCols}</Row>
-            <h1 className="text-center">Advantages</h1>
+        <Container fluid>
             <Row>
-                <Col>
-                    <Row><Backgrounds backgrounds={state.backgrounds} setBackground={updateBackground} updateBackground={updateBackground} addBackground={addBackground}/></Row>
+                <Col lg={12} xl={2}>
+                    <Instructions/>
                 </Col>
-                <Arts arts={state.arts} setArt={updateArt} />
-                <Realms realms={state.realms} setRealm={updateRealm} />
+                <Col>
+                    <h1 className="text-center">Personal Details</h1>
+                    <CharacterDetails state={state} updateCharacterDetail={updateCharacterDetail} updateLegacy={updateLegacy}/>
+                    <h1 className="text-center">Attributes</h1>
+                    <Row>{attributeCols}</Row>
+                    <h1 className="text-center">Abilities</h1>
+                    <Row>{abilityCols}</Row>
+                    <h1 className="text-center">Advantages</h1>
+                    <Row>
+                        <Col>
+                            <Row><Backgrounds backgrounds={state.backgrounds} setBackground={updateBackground} updateBackground={updateBackground} addBackground={addBackground}/></Row>
+                        </Col>
+                        <Arts arts={state.arts} setArt={updateArt} />
+                        <Realms realms={state.realms} setRealm={updateRealm} />
+                    </Row>
+                </Col>
+                <Col lg={12} xl={2}>
+                    <b>Experience Summary</b>
+                </Col>
             </Row>
         </Container>
     );

@@ -43,7 +43,7 @@ function SpendableRow({state, handleChange, collapsed})
                 onChange={e => handleChange('xp', Number(e.target.value))}
             />
         </Col>
-        <Col sm={1}>{state.xpToLevel?state.xpToLevel:4}</Col>
+        <Col sm={1}>{state.xpToLevel?state.xpToLevel :4}</Col>
         <Col sm={1}>{state.level?state.level:0}</Col>
     </Row>);
 }

@@ -38,7 +38,8 @@ function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, start
         level++;
     }
 
-    newState.level = level;
+    newState.level = level + Number(newState.freeLevels ?? 0);
+
     newState.xpToLevel = level === 0?firstLevelXPCost:level * xpCost;
     return newState;
 }
