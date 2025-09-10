@@ -134,5 +134,5 @@ export const CharacterDispatchers = (dispatch) => {
             addFlaw,
             updateFlaw
         };
-    }, [dispatch, ids]);
+    }, [dispatch, ids.background, ids.flaw, ids.merit]);
 };

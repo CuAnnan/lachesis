@@ -150,7 +150,19 @@ export const reducer = (state, action) =>
                 ...state,
                 hasChanges:true,
                 merits:state.merits.map(merit=>merit.id === action.meritId ? {...merit, [action.field]: action.value} : merit),
-            }
+            };
+        case "addFlaw":
+            return {
+                ...state,
+                hasChanges:true,
+                flaws:[...state.flaws, action.flaw]
+            };
+        case "updateFlaw":
+            return {
+                ...state,
+                hasChanges:true,
+                flaws:state.flaws.map(flaw=>flaw.id === action.flawId ? {...flaw, [action.field]: action.value} : flaw),
+            };
         case "updateCharacterDetail":
             return {
                 ...state,
