@@ -39,7 +39,10 @@ function Character()
         updateLegacy,
         getNextFlawId,
         addFlaw,
-        updateFlaw
+        updateFlaw,
+        deleteBackground,
+        deleteFlaw,
+        deleteMerit,
     } = CharacterDispatchers(dispatch);
 
     useEffect(()=>{
@@ -152,22 +155,25 @@ function Character()
                                     alreadyPurchased={state.backgrounds}
                                     updateField={updateBackground}
                                     addNew={addBackground}
+                                    deleteField={deleteBackground}
                                 />
                             </Row>
                             <Row>
                                 <BMFSection
-                                    title="Merits"
+                                    title="Merit"
                                     alreadyPurchased={state.merits}
                                     updateField={updateMerit}
                                     addNew={addMerit}
+                                    deleteField={deleteMerit}
                                     />
                             </Row>
                             <Row>
                                 <BMFSection
-                                    title="Flaws"
+                                    title="Flaw"
                                     alreadyPurchased={state.flaws}
                                     updateField={updateFlaw}
                                     addNew={addFlaw}
+                                    deleteField={deleteFlaw}
                                 />
                             </Row>
                         </Col>

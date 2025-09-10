@@ -138,6 +138,12 @@ export const reducer = (state, action) =>
                 ...state,
                 hasChanges:true,
                 backgrounds:state.backgrounds.map(background=>background.id === action.backgroundId ? {...background, [action.field]: action.value} : background),
+            };
+        case "removeBackground":
+            return {
+                ...state,
+                hasChanges:true,
+                backgrounds:state.backgrounds.filter(background => background.id !== action.backgroundId)
             }
         case 'addMerit':
             return {
@@ -151,6 +157,12 @@ export const reducer = (state, action) =>
                 hasChanges:true,
                 merits:state.merits.map(merit=>merit.id === action.meritId ? {...merit, [action.field]: action.value} : merit),
             };
+        case "removeMerit":
+            return {
+                ...state,
+                hasChanges: true,
+                merits: state.merits.filter(merit => merit.id !== action.meritId),
+            };
         case "addFlaw":
             return {
                 ...state,
@@ -162,6 +174,12 @@ export const reducer = (state, action) =>
                 ...state,
                 hasChanges:true,
                 flaws:state.flaws.map(flaw=>flaw.id === action.flawId ? {...flaw, [action.field]: action.value} : flaw),
+            };
+        case "removeFlaw":
+            return {
+                ...state,
+                hasChanges: true,
+                flaws: state.flaw.filter(flaw => flaw.id !== action.flawId),
             };
         case "updateCharacterDetail":
             return {

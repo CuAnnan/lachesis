@@ -40,7 +40,7 @@ function BMFSection({alreadyPurchased, updateField, deleteField, addNew, title})
         handleClose={handleClose}
         handleChange={handleChange}
         handleNew={handleNew}
-        type="Background"
+        type={title}
         state={state}
     />);
 

@@ -63,6 +63,14 @@ export const CharacterDispatchers = (dispatch) => {
             })
         };
 
+        const deleteFlaw = (flawId)=>
+        {
+            dispatch({
+                type: "deleteFlaw",
+                flawId
+            })
+        }
+
         const addMerit = (merit) =>
         {
             dispatch({
@@ -78,6 +86,13 @@ export const CharacterDispatchers = (dispatch) => {
                 meritId,
                 field,
                 value
+            });
+        }
+
+        const deleteMerit = (meritId)=>{
+            dispatch({
+                type:"deleteMerit",
+                meritId
             });
         }
 
@@ -97,6 +112,13 @@ export const CharacterDispatchers = (dispatch) => {
                 value,
             });
         };
+
+        const deleteBackground = (backgroundId) => {
+            dispatch({
+                type: "deleteBackground",
+                backgroundId
+            })
+        }
 
         const updateCharacterDetail = (field, value) => {
             if (field === "house")
@@ -127,12 +149,15 @@ export const CharacterDispatchers = (dispatch) => {
             getNextBackgroundId,
             updateBackground,
             addBackground,
+            deleteBackground,
             getNextMeritId,
             updateMerit,
+            deleteMerit,
             addMerit,
             getNextFlawId,
             addFlaw,
-            updateFlaw
+            updateFlaw,
+            deleteFlaw,
         };
     }, [dispatch, ids.background, ids.flaw, ids.merit]);
 };
