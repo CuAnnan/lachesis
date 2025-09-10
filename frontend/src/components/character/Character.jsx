@@ -1,10 +1,9 @@
-import {useReducer, useEffect, useState, useCallback, useMemo, useRef} from 'react';
+import {useReducer, useEffect, useState, useMemo} from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import AttributeUseGroup from './Spendable/Attributes/AttributeUseGroup.jsx';
 import AbilityUseGroup from "./Spendable/Abilities/AbilityUseGroup.jsx";
-import Backgrounds from './Spendable/Backgrounds/Backgrounds.jsx';
 import Arts from './Spendable/Arts/Arts.jsx';
 import Realms from './Spendable/Realms/Realms.jsx';
 import { useParams } from "react-router-dom";
@@ -16,6 +15,8 @@ import CharacterDetails from "./CharacterDetails/CharacterDetails.jsx";
 import {CharacterDispatchers} from "./CharacterDispatchers.js";
 
 import {reducer, attributeMap, flattenSheet, blankSheet} from "./CharacterReducer.js";
+import BMFSection from "./Spendable/BMFModal/BMFSection.jsx";
+
 
 function Character()
 {
@@ -26,13 +27,19 @@ function Character()
     const {
         updateArt,
         updateRealm,
-        addBackground,
         setAttribute,
         setAbility,
+        getNextBackgroundId,
+        addBackground,
         updateBackground,
+        getNextMeritId,
+        addMerit,
+        updateMerit,
         updateCharacterDetail,
         updateLegacy,
-        getNextBackgroundId,
+        getNextFlawId,
+        addFlaw,
+        updateFlaw
     } = CharacterDispatchers(dispatch);
 
     useEffect(()=>{
@@ -66,9 +73,11 @@ function Character()
                             data.backgrounds.push(trait);
                             break;
                         case 'Merit':
+                            trait.id = getNextMeritId();
                             data.merits.push(trait);
                             break;
                         case 'Flaw':
+                            trait.id = getNextFlawId();
                             data.flaws.push(trait);
                             break;
                     }
@@ -78,7 +87,7 @@ function Character()
                 console.error(error);
             });
 
-    },[nanoid]);
+    },[nanoid, getNextFlawId, getNextBackgroundId, getNextMeritId]);
 
     useEffect(() => {
         if (state.loading || saveRequest || !state.hasChanges) return;
@@ -121,10 +130,6 @@ function Character()
         [state.abilities, setAbility]
     );
 
-
-
-
-
     return (
         <Container fluid>
             <Row>
@@ -141,7 +146,30 @@ function Character()
                     <h1 className="text-center">Advantages</h1>
                     <Row>
                         <Col>
-                            <Row><Backgrounds backgrounds={state.backgrounds} setBackground={updateBackground} updateBackground={updateBackground} addBackground={addBackground}/></Row>
+                            <Row>
+                                <BMFSection
+                                    title="Background"
+                                    alreadyPurchased={state.backgrounds}
+                                    updateField={updateBackground}
+                                    addNew={addBackground}
+                                />
+                            </Row>
+                            <Row>
+                                <BMFSection
+                                    title="Merits"
+                                    alreadyPurchased={state.merits}
+                                    updateField={updateMerit}
+                                    addNew={addMerit}
+                                    />
+                            </Row>
+                            <Row>
+                                <BMFSection
+                                    title="Flaws"
+                                    alreadyPurchased={state.flaws}
+                                    updateField={updateFlaw}
+                                    addNew={addFlaw}
+                                />
+                            </Row>
                         </Col>
                         <Arts arts={state.arts} setArt={updateArt} />
                         <Realms realms={state.realms} setRealm={updateRealm} />

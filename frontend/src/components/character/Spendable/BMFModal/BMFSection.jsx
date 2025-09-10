@@ -1,34 +1,20 @@
+
 import React from 'react';
 import CollapsibleGroup from "../CollapsibleGroup.jsx";
-import Background from './Background.jsx';
+import BMFRow from './BMFRow.jsx';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import SpendableModal from "../SpendableModal.jsx";
-import BackgroundCategories from "./BackgroundCategories.js";
-
-import SpendableReducer from "../SpendableReducer.js";
-
-const COSTS = {
-    XP:4,
-    FP:2,
-    FIRST_LEVEL:3
-};
-
-const reducer = (state, action)=>
-{
-    return SpendableReducer(state, action, COSTS.XP, COSTS.FP, COSTS.FIRST_LEVEL);
-}
+import SpendableModal from "./SpendableModal.jsx";
+import reducer from "./BMFReducer.jsx";
 
 
-function Backgrounds({backgrounds, updateBackground, deleteBackground, addBackground})
+function BMFSection({alreadyPurchased, updateField, deleteField, addNew, title})
 {
     const [show, setShow] = React.useState(false);
     const handleClose = ()=>setShow(false);
     const handleOpen = ()=>setShow(true);
-
-
     const [state, dispatch] = React.useReducer(reducer, {});
 
     React.useEffect(()=>{
@@ -44,7 +30,7 @@ function Backgrounds({backgrounds, updateBackground, deleteBackground, addBackgr
 
     const handleNew = ()=>
     {
-        addBackground(state);
+        addNew(state);
         setShow(false);
     }
 
@@ -55,20 +41,19 @@ function Backgrounds({backgrounds, updateBackground, deleteBackground, addBackgr
         handleChange={handleChange}
         handleNew={handleNew}
         type="Background"
-        values={BackgroundCategories}
         state={state}
     />);
 
     const renderBackgrounds = React.useCallback(() => (
-        backgrounds.map((bg, i) => (
-            <Background
+        alreadyPurchased.map((bg, i) => (
+            <BMFRow
                 key={`background-${i}`}
                 background={bg}
-                updateBackground={updateBackground}
-                deleteBackground={deleteBackground}
+                updateBackground={updateField}
+                deleteBackground={deleteField}
             />
         ))
-    ), [backgrounds, updateBackground, deleteBackground]);
+    ), [alreadyPurchased, updateField, deleteField]);
 
     return (
         <Container className="container-fluid">
@@ -76,7 +61,7 @@ function Backgrounds({backgrounds, updateBackground, deleteBackground, addBackgr
             <Row>
                 <Col>
                     <CollapsibleGroup
-                        title="Backgrounds"
+                        title={title}
                         className="abilityUseGroup"
                         nonCollapsible={true}
                         renderItems={renderBackgrounds}/>
@@ -91,4 +76,4 @@ function Backgrounds({backgrounds, updateBackground, deleteBackground, addBackgr
     );
 }
 
-export default Backgrounds;
+export default BMFSection;

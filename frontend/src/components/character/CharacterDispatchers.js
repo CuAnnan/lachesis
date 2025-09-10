@@ -7,11 +7,16 @@ import { useMemo, useRef } from "react";
  * @returns An object whose keys are the action helpers.
  */
 export const CharacterDispatchers = (dispatch) => {
-    const backgroundId = useRef(1);
-
+    const ids = {
+        background:useRef(1),
+        merit:useRef(1),
+        flaw:useRef(1)
+    }
 
     return useMemo(() => {
-        const getNextBackgroundId = ()=> backgroundId.current++;
+        const getNextBackgroundId = ()=> ids.background.current++;
+        const getNextMeritId = ()=> ids.merit.current++;
+        const getNextFlawId = ()=> ids.flaw.current++;
 
 
         const updateArt = (art, field, value) => {
@@ -20,13 +25,6 @@ export const CharacterDispatchers = (dispatch) => {
 
         const updateRealm = (realm, field, value) => {
             dispatch({ type: "updateRealm", realm, field, value });
-        };
-
-        const addBackground = (background) => {
-            dispatch({
-                type: "addBackground",
-                background: { ...background, id: backgroundId.current++ },
-            });
         };
 
         const setAttribute = (useGroup, name, field, value) => {
@@ -48,6 +46,48 @@ export const CharacterDispatchers = (dispatch) => {
                 value,
             });
         };
+
+        const addFlaw = (flaw)=>{
+            dispatch({
+                type: "addFlaw",
+                flaw:{...flaw, ids:ids.flaw.current++}
+            });
+        };
+
+        const updateFlaw = (flawId, field, value)=>{
+            dispatch({
+                type: "updateFlaw",
+                flawId,
+                field,
+                value
+            })
+        };
+
+        const addMerit = (merit) =>
+        {
+            dispatch({
+                type: "addMerit",
+                merit:{...merit, id:ids.merit.current++},
+            })
+        }
+
+        const updateMerit = (meritId, field, value)=>
+        {
+            dispatch({
+                type:'updateMerit',
+                meritId,
+                field,
+                value
+            });
+        }
+
+        const addBackground = (background) => {
+            dispatch({
+                type: "addBackground",
+                background: { ...background, id: ids.background.current++ },
+            });
+        };
+
 
         const updateBackground = (bgId, field, value) => {
             dispatch({
@@ -80,13 +120,19 @@ export const CharacterDispatchers = (dispatch) => {
         return {
             updateArt,
             updateRealm,
-            addBackground,
             setAttribute,
             setAbility,
-            updateBackground,
             updateCharacterDetail,
             updateLegacy,
-            getNextBackgroundId
+            getNextBackgroundId,
+            updateBackground,
+            addBackground,
+            getNextMeritId,
+            updateMerit,
+            addMerit,
+            getNextFlawId,
+            addFlaw,
+            updateFlaw
         };
-    }, [dispatch]);
+    }, [dispatch, ids]);
 };

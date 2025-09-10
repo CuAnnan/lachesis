@@ -139,6 +139,18 @@ export const reducer = (state, action) =>
                 hasChanges:true,
                 backgrounds:state.backgrounds.map(background=>background.id === action.backgroundId ? {...background, [action.field]: action.value} : background),
             }
+        case 'addMerit':
+            return {
+                ...state,
+                hasChanges:true,
+                merits:[...state.merits, action.merit]
+            };
+        case "updateMerit":
+            return {
+                ...state,
+                hasChanges:true,
+                merits:state.merits.map(merit=>merit.id === action.meritId ? {...merit, [action.field]: action.value} : merit),
+            }
         case "updateCharacterDetail":
             return {
                 ...state,

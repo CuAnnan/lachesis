@@ -8,7 +8,6 @@ function CollapsibleGroup({title, type, renderItems, startCollapsed, nonCollapsi
     return (
         <Col className={`useGroup ${type}`} id={`group-${title.replace(/\s+/g, "-").toLowerCase()}`}>
             <SpendableHeaderCol title={title} collapsed={collapsed} setCollapsed={setCollapsed} nonCollapsible={nonCollapsible} />
-
             {renderItems( collapsed )}
         </Col>
     );
