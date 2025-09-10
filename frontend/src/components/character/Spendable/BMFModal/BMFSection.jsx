@@ -6,7 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import SpendableModal from "./SpendableModal.jsx";
+import BMFModal from "./BMFModal.jsx";
 import reducer from "./BMFReducer.jsx";
 
 
@@ -35,7 +35,7 @@ function BMFSection({alreadyPurchased, updateField, deleteField, addNew, title})
     }
 
 
-    const modal =(<SpendableModal
+    const modal =(<BMFModal
         show={show}
         handleClose={handleClose}
         handleChange={handleChange}

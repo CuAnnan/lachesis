@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-function SpendableModal({type, state, show, handleChange, handleClose, handleNew})
+function BMFModal({type, state, show, handleChange, handleClose, handleNew})
 {
     return <Modal show={show} onHide={handleClose} centered size="lg" backdrop="static" keyboard={false} >
         <Modal.Header closeButton>
@@ -51,4 +51,4 @@ function SpendableModal({type, state, show, handleChange, handleClose, handleNew
     </Modal>
 }
 
-export default SpendableModal;
+export default BMFModal;
