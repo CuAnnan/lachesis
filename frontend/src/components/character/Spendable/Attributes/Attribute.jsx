@@ -24,9 +24,9 @@ function Attribute({ attribute, useGroup, setAttribute, collapsed })
     const handleChange = (field, value) => {
         dispatch({
             type: `set${field.toUpperCase()}`,
-            [field]: Number(value),
+            [field]: value,
         });
-        setAttribute(useGroup, attribute.name, field, Number(value));
+        setAttribute(useGroup, attribute.name, field, value);
     };
 
     return (<SpendableRow collapsed={collapsed} handleChange={handleChange} state={state}></SpendableRow>);

@@ -3,15 +3,13 @@ import SpendableRow from '../SpendableRow.jsx'
 
 import reducer from "./BMFReducer.jsx";
 
-function BMFRow({background, updateBackground, collapsed})
+function BMFRow({item, updateItem, deleteItem, collapsed})
 {
-
-
     const [state, dispatch] = React.useReducer(reducer, {});
 
     React.useEffect(()=>{
-        dispatch({type:'load', payload:background});
-    }, [background]);
+        dispatch({type:'load', payload:item});
+    }, [item]);
 
     const handleChange = (field, value) => {
         dispatch({
@@ -19,8 +17,9 @@ function BMFRow({background, updateBackground, collapsed})
             [field]: Number(value ?? 0),
         });
 
-        updateBackground(background.id, field, value);
+        updateItem(item.id, field, value);
     };
+
 
     return (<SpendableRow handleChange={handleChange} state={state} collapsed={collapsed}/>);
 }

@@ -274,8 +274,8 @@ export const attributeMap = {
 
 export const flattenSheet=(sheet)=>
 {
-    console.log(sheet);
-    return [
+    const flattened =  {...sheet,
+        traits:[
         ...Object.values(sheet?.attributes ?? {}).flatMap(g => g),
         ...Object.values(sheet?.abilities ?? {}).flatMap(g => g),
         ...Object.values(sheet?.arts ?? []),
@@ -283,5 +283,14 @@ export const flattenSheet=(sheet)=>
         ...Object.values(sheet?.backgrounds ?? []),
         ...Object.values(sheet?.merits ?? []),
         ...Object.values(sheet?.flaws ?? []),
-    ];
+    ]};
+    delete flattened.attributes;
+    delete flattened.abilities;
+    delete flattened.realms;
+    delete flattened.arts;
+    delete flattened.backgrounds;
+    delete flattened.flaws;
+    delete flattened.merits;
+
+    return flattened;
 }

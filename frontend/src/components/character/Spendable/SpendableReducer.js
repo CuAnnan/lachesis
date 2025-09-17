@@ -5,6 +5,9 @@ function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, start
         case 'setNAME':
             newState = {...state, name: action.name};
             break;
+        case 'setSPECIALTY':
+            newState = {...state, specialty: action.specialty};
+            break;
         case 'setFP':
             newState = { ...state, fp: action.fp };
             break;

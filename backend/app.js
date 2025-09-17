@@ -3,10 +3,14 @@ import path from 'path';
 import http from 'http';
 import cors from 'cors';
 import MongoConnectionFactory from "./inc/MongoConnectionFactory.js";
+import DiscordClientContainer from "./Discord/DiscordClientContainer.js";
 
  import conf from '../conf.js';
  MongoConnectionFactory.init(conf).then(() => {
-     console.log('MongoConnectionFactory initialized');
+     console.log('MongoConnectionFactory initialized, initialising discord bot');
+     DiscordClientContainer.initialise(conf, MongoConnectionFactory.getInstance()).then(container=>{
+         console.log("Discord client container initialised");
+     });
  });
 
 

@@ -96,7 +96,7 @@ function Character()
         if (state.loading || saveRequest || !state.hasChanges) return;
 
         const request = client
-            .post('/sheets', { sheet: { traits: flattenSheet(state) } })
+            .post('/sheets', { sheet:  flattenSheet(state), nanoid })
             .then(resp => {
                 console.log('Saved:', resp.data);
                 dispatch({ type: 'resetDirty' });

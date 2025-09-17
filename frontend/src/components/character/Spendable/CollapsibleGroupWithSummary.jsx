@@ -15,12 +15,12 @@ function summary(items)
     );
 }
 
-function CollapsibleGroupWithSummary({title,type,items,itemProps,ItemComponent,startCollapsed,nonCollapsible,useGroup})
+function CollapsibleGroupWithSummary({title, items, itemProps, ItemComponent, startCollapsed, nonCollapsible, useGroup})
 {
     const [collapsed, setCollapsed] = useState(startCollapsed);
     const totals = summary(items);
     return (
-        <Col className={`useGroup ${type}`} id={`group-${title.replace(/\s+/g, "-").toLowerCase()}`}>
+        <Col className={`useGroup`} id={`group-${title.replace(/\s+/g, "-").toLowerCase()}`}>
             <SpendableHeaderCol title={title} collapsed={collapsed} setCollapsed={setCollapsed} nonCollapsible={nonCollapsible} />
             {items.map((item, index) => (
                 <ItemComponent

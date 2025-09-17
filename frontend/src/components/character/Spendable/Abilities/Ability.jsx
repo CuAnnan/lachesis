@@ -23,9 +23,9 @@ function Ability({ ability, useGroup, setAbility, collapsed })
     const handleChange = (field, value) => {
         dispatch({
             type: `set${field.toUpperCase()}`,
-            [field]: value ? parseInt(value) : 0,
+            [field]: value,
         });
-        setAbility(useGroup, ability.name, field, Number(value));
+        setAbility(useGroup, ability.name, field, value);
     };
 
     return (<SpendableRow collapsed={collapsed} handleChange={handleChange} state={state}></SpendableRow>);

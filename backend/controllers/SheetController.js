@@ -1,5 +1,6 @@
 import Controller from "./Controller.js";
 import blankSheetSchema from "../schema/blankSheetSchema.js";
+import req from "express/lib/request.js";
 const xp = 0, cp = 0, fp = 0;
 
 const sheetStructure = blankSheetSchema;
@@ -33,6 +34,44 @@ class SheetController extends Controller
         res.status(200).json(sheetJSON.sheet);
     }
 
+    async getSheetsByHash(hash)
+    {
+        let collection = this.db.collection('sheets');
+        let sheetsCursor = await collection.find({digest:hash});
+        if(!sheetsCursor)
+        {
+            throw new Error(`No sheet found for user`);
+        }
+        const sheets = [];
+        for await(let sheet of sheetsCursor)
+        {
+            sheets.push(sheet);
+        }
+        return sheets;
+    }
+
+    async getSheetByHashAndNanoid({hash, nanoid})
+    {
+        const collection = this.db.collection('sheets');
+        const sheet = await collection.findOne({digest:hash, nanoid});
+        if(!sheet)
+        {
+            throw new Error(`No sheet found for user with that unique id`);
+        }
+        const loadedSheetsCollection = this.db.collection('loadedSheets');
+
+        try {
+            await loadedSheetsCollection.updateOne({hash}, {$set:{nanoid}}, {upsert:true});
+
+            return sheet;
+        }
+        catch(err)
+        {
+            console.log(err);
+            throw err;
+        }
+    }
+
     async getBlankSheet(req, res)
     {
         res.status(200).json(sheetJSON);
@@ -43,14 +82,10 @@ class SheetController extends Controller
         return sheetJSON;
     }
 
-    async getAllSheets()
-    {
-        return await this.db.collection('sheets').find({});
-    }
-
     async saveSheet(req, res)
     {
-        console.log(req.body.sheet);
+        let collection = this.db.collection('sheets');
+        await collection.findOneAndUpdate({nanoid:req.body.nanoid}, {$set:{sheet:req.body.sheet}});
 
         res.status(200).json({status: 'success'});
     }
