@@ -10,6 +10,7 @@ function AbilityUseGroup({ useGroup, abilities, setAbility })
             items={abilities}
             ItemComponent={Ability}
             itemProps={(ability) => ({ability, setAbility })}
+            useGroup={useGroup}
         />
     );
 }

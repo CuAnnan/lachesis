@@ -25,6 +25,7 @@ function AttributeUseGroup({ useGroup, attributes, setAttribute })
         items={attributes}
         ItemComponent={Attribute}
         itemProps={(attribute) => ({attribute, setAttribute })}
+        useGroup={useGroup}
     />
 }
 

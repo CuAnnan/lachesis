@@ -245,7 +245,6 @@ export const blankSheet = (json) => (
         loading: true,
         error: null,
         hasChanges: false,
-
         player:json?.player,
         chronicle:json?.chronicle,
         kith:json?.kith,
@@ -275,6 +274,7 @@ export const attributeMap = {
 
 export const flattenSheet=(sheet)=>
 {
+    console.log(sheet);
     return [
         ...Object.values(sheet?.attributes ?? {}).flatMap(g => g),
         ...Object.values(sheet?.abilities ?? {}).flatMap(g => g),

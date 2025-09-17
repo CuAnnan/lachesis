@@ -15,12 +15,7 @@ function summary(items)
     );
 }
 
-function CollapsibleGroupWithSummary({
-    title,type,items,itemProps,
-    // we have to do this because of the false positive that passing in an item component generates.
-    // eslint-disable-next-line react/prop-types
-    ItemComponent,startCollapsed,nonCollapsible
-})
+function CollapsibleGroupWithSummary({title,type,items,itemProps,ItemComponent,startCollapsed,nonCollapsible,useGroup})
 {
     const [collapsed, setCollapsed] = useState(startCollapsed);
     const totals = summary(items);
@@ -32,7 +27,10 @@ function CollapsibleGroupWithSummary({
                     key={index}
                     {...item}
                     {...itemProps(item, collapsed)}
-                    collapsed={collapsed}/>
+                    collapsed={collapsed}
+                    {...(useGroup !== undefined ? { useGroup } : {})}
+                />
+
             ))}
             <Row className="purchasable d-flex justify-content-center align-items-center">
                 <Col>Summary:</Col>
