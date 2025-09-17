@@ -3,7 +3,7 @@ import {SlashCommandBuilder, MessageFlags} from 'discord.js';
 
 
 
-export default({controller, db, conf})=>({
+export default({controller})=>({
     data: new SlashCommandBuilder()
         .setName('show-characters')
         .setDescription("Show the characters you have on this server")
@@ -20,6 +20,7 @@ export default({controller, db, conf})=>({
             }
             interaction.reply({content:`Your sheets on this server are\n${sheetsList}`, flags: MessageFlags.Ephemeral});
         }).catch(error=>{
+            console.log(error);
             interaction.reply({content:`Your have no sheets on this server`, flags: MessageFlags.Ephemeral});
         });
 

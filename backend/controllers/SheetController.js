@@ -1,6 +1,5 @@
 import Controller from "./Controller.js";
 import blankSheetSchema from "../schema/blankSheetSchema.js";
-import req from "express/lib/request.js";
 const xp = 0, cp = 0, fp = 0;
 
 const sheetStructure = blankSheetSchema;
@@ -9,7 +8,7 @@ const sheetStructure = blankSheetSchema;
 const sheetJSON = {};
 
 sheetJSON.traits = [
-    ...Object.entries(sheetStructure.attributes).flatMap(([group, list])=>
+    ...Object.entries(sheetStructure.attributes).flatMap(([_group, list])=>
         list.map(name=>({type:'Attribute', name}))
     ),
     ...Object.entries(sheetStructure.abilities).flatMap(([group, list]) =>

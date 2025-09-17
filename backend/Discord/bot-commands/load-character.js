@@ -3,7 +3,7 @@ import {SlashCommandBuilder, MessageFlags} from 'discord.js';
 
 
 
-export default({controller, db, conf})=>({
+export default({controller})=>({
     data: new SlashCommandBuilder()
         .setName('load-character')
         .setDescription("Load a given character by its unique id, which can be found with /show-characters.")
@@ -19,7 +19,7 @@ export default({controller, db, conf})=>({
 
         controller.getSheetByHashAndNanoid({hash, nanoid}).then(data=>{
             interaction.reply({content:`The sheet for ${data.sheet.name} has been loaded as your current sheet`, flags: MessageFlags.Ephemeral});
-        }).catch(err=>{
+        }).catch(_err=>{
             interaction.reply({content:`Your have no sheet on this server with that id`, flags: MessageFlags.Ephemeral});
         });
     },
