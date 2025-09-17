@@ -1,23 +1,15 @@
 import Art from "./Art.jsx";
-import CollapsibleGroup from "../CollapsibleGroup.jsx";
+import CollapsibleGroupWithSummary from "../CollapsibleGroupWithSummary.jsx";
 
 function Arts({arts, setArt})
 {
-    return (
-        <CollapsibleGroup
-            title="Arts"
-            className="artsUseGroup"
-            startCollapsed={true}
-            renderItems={(collapsed)=> (
-                arts.map((art) => (
-                    <Art
-                        key={art.name}
-                        art={art}
-                        collapsed={collapsed}
-                        setArt={setArt} />
-                ))
-            )}/>
-    );
+    return <CollapsibleGroupWithSummary
+        startCollapsed={true}
+        title="Arts"
+        className="artsUseGroup"
+        items={arts}
+        ItemComponent={Art}
+        itemProps={(art) => ({art, setArt })}/>;
 }
 
 export default Arts;

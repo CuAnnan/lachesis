@@ -181,9 +181,7 @@ function Character()
                         <Realms realms={state.realms} setRealm={updateRealm} />
                     </Row>
                 </Col>
-                <Col lg={12} xl={2}>
-                    <b>Experience Summary</b>
-                </Col>
+                <Col lg={12} xl={2}></Col>
             </Row>
         </Container>
     );

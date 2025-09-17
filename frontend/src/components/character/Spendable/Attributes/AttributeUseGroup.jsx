@@ -1,9 +1,9 @@
-import CollapsibleGroup from "../CollapsibleGroup.jsx";
 import Attribute from "./Attribute.jsx";
+import CollapsibleGroupWithSummary from "../CollapsibleGroupWithSummary.jsx";
 
 function AttributeUseGroup({ useGroup, attributes, setAttribute })
 {
-    return (
+    /*return (
         <CollapsibleGroup
             title={useGroup}
             className="attributeUseGroup"
@@ -18,7 +18,14 @@ function AttributeUseGroup({ useGroup, attributes, setAttribute })
                     />
                 )))
             }/>
-    );
+    );*/
+    return <CollapsibleGroupWithSummary
+        title={useGroup}
+        className="attributeUseGroup"
+        items={attributes}
+        ItemComponent={Attribute}
+        itemProps={(attribute) => ({attribute, setAttribute })}
+    />
 }
 
 export default AttributeUseGroup;

@@ -8,16 +8,18 @@ import './SpendableRow.css';
 
 function SpendableRow({state, handleChange, collapsed})
 {
-    let stateNameColumn = state.specialty?<OverlayTrigger
-        placement="top"
-        overlay={<Tooltip id={`tt-${state.id}`}>{state.specialty}</Tooltip>}
-    >
-        <Col className="stateName">
+    let stateNameColumn = state.specialty?
+        <OverlayTrigger
+            placement="top"
+            overlay={<Tooltip id={`tt-${state.id}`}>{state.specialty}</Tooltip>}
+        >
+            <Col className="stateName">
+                {state.name + (state.specialty?" *":"")}
+            </Col>
+        </OverlayTrigger>
+        :<Col className="stateName">
             {state.name + (state.specialty?" *":"")}
-        </Col>
-    </OverlayTrigger>:<Col className="stateName">
-        {state.name + (state.specialty?" *":"")}
-    </Col>;
+        </Col>;
 
 
     return ((collapsed&&state.level===0)?<></>:<Row className="purchasable d-flex justify-content-center align-items-center">

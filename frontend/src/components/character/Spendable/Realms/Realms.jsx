@@ -1,21 +1,16 @@
 import Realm from './Realm.jsx';
-import CollapsibleGroup from "../CollapsibleGroup.jsx";
+import CollapsibleGroupWithSummary from "../CollapsibleGroupWithSummary.jsx";
 
 function Realms({realms, setRealm})
 {
     return (
-        <CollapsibleGroup
+        <CollapsibleGroupWithSummary
             title="Realms"
             className="realmsUseGroup"
-            renderItems={(collapsed)=> (
-                realms.map((realm)=>(
-                    <Realm
-                        key={realm.name}
-                        realm={realm}
-                        setRealm={setRealm}
-                        collapsed={collapsed}/>
-                ))
-            )}/>
+            items={realms}
+            ItemComponent={Realm}
+            itemProps={(realm) => ({realm, setRealm })}
+            />
     );
 }
 
