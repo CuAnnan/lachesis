@@ -1,22 +1,19 @@
 import Controller from "./Controller.js";
 import KithainSheet from "../Character Model/KithainSheet.js";
 //import DiceRoll from "../Character Model/DiceRoll.js";
+import {nanoid} from "nanoid";
 
-//import blankSheetSchema from "../schema/blankSheetSchema.js";
+import blankSheetSchema from "../schema/blankSheetSchema.js";
 //const xp = 0, cp = 0, fp = 0;
 
-//const sheetStructure = blankSheetSchema;
 
 
 
 class SheetController extends Controller
 {
-
     async getSheetDocument(req, res)
     {
-        let collection = this.db.collection('sheets');
-
-        let sheetJSON = await collection.findOne({nanoid:req.params.nanoid});
+        let sheetJSON = await this.collection.findOne({nanoid:req.params.nanoid});
 
         if(!sheetJSON)
         {
@@ -29,8 +26,7 @@ class SheetController extends Controller
 
     async getSheetsByHash(hash)
     {
-        let collection = this.db.collection('sheets');
-        let sheetsCursor = await collection.find({digest:hash});
+        let sheetsCursor = await this.collection.find({digest:hash});
         if(!sheetsCursor)
         {
             throw new Error(`No sheet found for user`);
@@ -41,6 +37,13 @@ class SheetController extends Controller
             sheets.push(sheet);
         }
         return sheets;
+    }
+
+    async addSheet({hash, guildId, name})
+    {
+        const sheetDocument = {digest:hash, guildId, nanoid:nanoid(), sheet:{...blankSheetSchema, name}};
+        await this.collection.insertOne(sheetDocument);
+        return sheetDocument.nanoid;
     }
 
     async getSheetByDigest(hash)
@@ -64,8 +67,7 @@ class SheetController extends Controller
             return sheet;
         }
 
-        const collection = this.db.collection('sheets');
-        const sheetDocument = await collection.findOne({digest:hash, nanoid});
+        const sheetDocument = await this.collection.findOne({digest:hash, nanoid});
         if(!sheetDocument)
         {
             throw new Error(`No sheet found for user with that unique id`);
@@ -89,18 +91,17 @@ class SheetController extends Controller
 
     async getBlankSheet(req, res)
     {
-        res.status(200).json(sheetJSON);
+        res.status(200).json(blankSheetSchema);
     }
 
     static getBlankSheetDocument()
     {
-        return sheetJSON;
+        return blankSheetSchema;
     }
 
     async saveSheet(req, res)
     {
-        let collection = this.db.collection('sheets');
-        await collection.findOneAndUpdate({nanoid:req.body.nanoid}, {$set:{sheet:req.body.sheet}});
+        await this.collection.findOneAndUpdate({nanoid:req.body.nanoid}, {$set:{sheet:req.body.sheet}});
 
         res.status(200).json({status: 'success'});
     }
@@ -108,6 +109,11 @@ class SheetController extends Controller
     static getInstance()
     {
         return super.getInstance(this);
+    }
+
+    get collection()
+    {
+        return this.db.collection('sheets');
     }
 }
 
