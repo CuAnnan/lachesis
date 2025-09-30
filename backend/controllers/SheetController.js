@@ -1,25 +1,17 @@
 import Controller from "./Controller.js";
-import blankSheetSchema from "../schema/blankSheetSchema.js";
-const xp = 0, cp = 0, fp = 0;
+import KithainSheet from "../Character Model/KithainSheet.js";
+import DiceRoll from "../Character Model/DiceRoll.js";
 
-const sheetStructure = blankSheetSchema;
+//import blankSheetSchema from "../schema/blankSheetSchema.js";
+//const xp = 0, cp = 0, fp = 0;
+
+//const sheetStructure = blankSheetSchema;
 
 
-const sheetJSON = {};
-
-sheetJSON.traits = [
-    ...Object.entries(sheetStructure.attributes).flatMap(([_group, list])=>
-        list.map(name=>({type:'Attribute', name}))
-    ),
-    ...Object.entries(sheetStructure.abilities).flatMap(([group, list]) =>
-        list.map(name => ({ type: group, name }))
-    ),
-    ...sheetStructure.arts.map(art=>({type:'Art', name:art})),
-    ...sheetStructure.realms.map(realm => ({ type: 'Realm', name: realm }))
-].map(trait => ({ ...trait, cp, xp, fp }));
 
 class SheetController extends Controller
 {
+
     async getSheetDocument(req, res)
     {
         let collection = this.db.collection('sheets');
@@ -32,6 +24,8 @@ class SheetController extends Controller
         }
         res.status(200).json(sheetJSON.sheet);
     }
+
+
 
     async getSheetsByHash(hash)
     {
@@ -49,11 +43,30 @@ class SheetController extends Controller
         return sheets;
     }
 
+    async getSheetByDigest(hash)
+    {
+        const loadedSheetsCollection = this.db.collection('loadedSheets');
+        const nanoid = (await loadedSheetsCollection.findOne({hash})).nanoid;
+        if(!nanoid)
+        {
+            throw new Error("There is no sheet loaded for your account on this Server");
+        }
+        return await this.getSheetByHashAndNanoid({hash, nanoid});
+    }
+
     async getSheetByHashAndNanoid({hash, nanoid})
     {
+        const cacheHash = hash+":"+nanoid;
+
+        let sheet = this.objectCache.get(cacheHash);
+        if(sheet)
+        {
+            return sheet;
+        }
+
         const collection = this.db.collection('sheets');
-        const sheet = await collection.findOne({digest:hash, nanoid});
-        if(!sheet)
+        const sheetDocument = await collection.findOne({digest:hash, nanoid});
+        if(!sheetDocument)
         {
             throw new Error(`No sheet found for user with that unique id`);
         }
@@ -61,7 +74,8 @@ class SheetController extends Controller
 
         try {
             await loadedSheetsCollection.updateOne({hash}, {$set:{nanoid}}, {upsert:true});
-
+            sheet = await KithainSheet.fromJSON(sheetDocument.sheet);
+            this.objectCache.set(cacheHash, sheet);
             return sheet;
         }
         catch(err)
@@ -70,6 +84,8 @@ class SheetController extends Controller
             throw err;
         }
     }
+
+
 
     async getBlankSheet(req, res)
     {

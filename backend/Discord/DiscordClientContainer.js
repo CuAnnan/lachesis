@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import {Client, Collection, Events, GatewayIntentBits} from "discord.js";
 import SheetController from "../controllers/SheetController.js";
+import DiceRoll from "../Character Model/DiceRoll.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -38,7 +39,7 @@ class DiscordClientContainer
         for (const file of commandFiles)
         {
             const module = await import(`./bot-commands/${file}`);
-            const command = module.default({ controller, conf, db: mongoClient });
+            const command = module.default({ controller, conf, db: mongoClient, DiceRoll });
 
             if ('data' in command && 'execute' in command) {
                 commands.push(command);

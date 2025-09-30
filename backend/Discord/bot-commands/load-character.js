@@ -18,8 +18,9 @@ export default({controller})=>({
         const nanoid = interaction.options.getString('nanoid');
 
         controller.getSheetByHashAndNanoid({hash, nanoid}).then(data=>{
-            interaction.reply({content:`The sheet for ${data.sheet.name} has been loaded as your current sheet`, flags: MessageFlags.Ephemeral});
+            interaction.reply({content:`The sheet for ${data.name} has been loaded as your current sheet`, flags: MessageFlags.Ephemeral});
         }).catch(_err=>{
+            console.log(_err);
             interaction.reply({content:`Your have no sheet on this server with that id`, flags: MessageFlags.Ephemeral});
         });
     },
