@@ -1,7 +1,23 @@
+import SpendableReducer from './Spendable/SpendableReducer.js';
+
 /*
  * I've pulled this into its own file because the attribute and skill bonuses from Houses
  * are quiet verbose to implement and I didn't want that code polluting Character.jsx, which is largely a layout file
  */
+
+const updateSpendable = (item, action, field) => {
+    const reducerAction = { type: `set${field.toUpperCase()}`, [field]: action.value };
+    
+    return SpendableReducer(
+        { ...item, [field]: action.value },
+        reducerAction,
+        item.xpCost ?? 4,        // Default xpCost
+        item.fpCost ?? 1,        // Default fpCost
+        item.firstLevelXPCost ?? 4, // Default firstLevelXPCost
+        item.startLevel ?? 0
+    );
+};
+
 
 const kithBonuses = {
     'Piskie':
@@ -81,51 +97,13 @@ export const reducer = (state, action) =>
     switch (action.type) {
         case 'loadData':
             return { ...state, loading: false, error: null, ...action.payload };
-        case 'updateAttribute':
-            return {
-                ...state,
-                hasChanges:true,
-                attributes: {
-                    ...state.attributes,
-                    [action.useGroup]: state.attributes[action.useGroup].map(attribute =>
-                        attribute.name === action.name
-                            ? { ...attribute, [action.field]: action.value }
-                            : attribute
-                    ),
-                },
-            };
-        case 'updateAbility':
-            return {
-                ...state,
-                hasChanges:true,
-                abilities:{
-                    ...state.abilities,
-                    [action.useGroup]:state.abilities[action.useGroup].map(skill=>
-                        skill.name === action.abilityName
-                            ? { ...skill, [action.field]: action.value }
-                            : skill
-                    )
-                }
-            };
-        case 'updateArt':
-            return {
-                ...state,
-                hasChanges:true,
-                arts:state.arts.map(art=>art.name === action.art ? {...art, [action.field]: action.value } : art),
-            };
-        case 'updateRealm':
-            return {
-                ...state,
-                hasChanges:true,
-                realms:state.realms.map(realm=> realm.name === action.realm ? {...realm, [action.field]: action.value } : realm),
-            };
         case 'resetDirty':
             return {
                 ...state,
                 hasChanges:false
-            }
-        case 'addBackground':
-            return {
+            };
+                case 'addBackground':
+        return {
                 ...state,
                 hasChanges:true,
                 backgrounds:[
@@ -133,12 +111,6 @@ export const reducer = (state, action) =>
                     action.background
                 ]
             }
-        case "updateBackground":
-            return {
-                ...state,
-                hasChanges:true,
-                backgrounds:state.backgrounds.map(background=>background.id === action.backgroundId ? {...background, [action.field]: action.value} : background),
-            };
         case "removeBackground":
             return {
                 ...state,
@@ -150,12 +122,6 @@ export const reducer = (state, action) =>
                 ...state,
                 hasChanges:true,
                 merits:[...state.merits, action.merit]
-            };
-        case "updateMerit":
-            return {
-                ...state,
-                hasChanges:true,
-                merits:state.merits.map(merit=>merit.id === action.meritId ? {...merit, [action.field]: action.value} : merit),
             };
         case "removeMerit":
             return {
@@ -169,18 +135,97 @@ export const reducer = (state, action) =>
                 hasChanges:true,
                 flaws:[...state.flaws, action.flaw]
             };
-        case "updateFlaw":
-            return {
-                ...state,
-                hasChanges:true,
-                flaws:state.flaws.map(flaw=>flaw.id === action.flawId ? {...flaw, [action.field]: action.value} : flaw),
-            };
         case "removeFlaw":
             return {
                 ...state,
                 hasChanges: true,
                 flaws: state.flaw.filter(flaw => flaw.id !== action.flawId),
             };
+
+        case 'updateAttribute':
+            return {
+                ...state,
+                hasChanges: true,
+                attributes: {
+                    ...state.attributes,
+                    [action.useGroup]: state.attributes[action.useGroup].map(attribute =>
+                        attribute.name === action.name
+                            ? updateSpendable(attribute, action, action.field)
+                            : attribute
+                    ),
+                },
+            };
+
+        case 'updateAbility':
+            return {
+                ...state,
+                hasChanges: true,
+                abilities: {
+                    ...state.abilities,
+                    [action.useGroup]: state.abilities[action.useGroup].map(ability =>
+                        ability.name === action.name
+                            ? updateSpendable(ability, action, action.field)
+                            : ability
+                    ),
+                },
+            };
+
+        case 'updateArt':
+            return {
+                ...state,
+                hasChanges: true,
+                arts: state.arts.map(art =>
+                    art.name === action.name
+                        ? updateSpendable(art, action, action.field)
+                        : art
+                ),
+            };
+
+        case 'updateRealm':
+            return {
+                ...state,
+                hasChanges: true,
+                realms: state.realms.map(realm =>
+                    realm.name === action.name
+                        ? updateSpendable(realm, action, action.field)
+                        : realm
+                ),
+            };
+
+        // Repeat for backgrounds, merits, flaws if they use SpendableReducer logic
+        case 'updateBackground':
+            return {
+                ...state,
+                hasChanges: true,
+                backgrounds: state.backgrounds.map(bg =>
+                    bg.id === action.id
+                        ? updateSpendable(bg, action, action.field)
+                        : bg
+                ),
+            };
+
+        case 'updateMerit':
+            return {
+                ...state,
+                hasChanges: true,
+                merits: state.merits.map(merit =>
+                    merit.id === action.id
+                        ? updateSpendable(merit, action, action.field)
+                        : merit
+                ),
+            };
+
+        case 'updateFlaw':
+            return {
+                ...state,
+                hasChanges: true,
+                flaws: state.flaws.map(flaw =>
+                    flaw.id === action.id
+                        ? updateSpendable(flaw, action, action.field)
+                        : flaw
+                ),
+            };
+
         case "updateCharacterDetail":
             return {
                 ...state,

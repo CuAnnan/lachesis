@@ -9,13 +9,13 @@ function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, start
             newState = {...state, specialty: action.specialty};
             break;
         case 'setFP':
-            newState = { ...state, fp: action.fp };
+            newState = { ...state, fp: action.fp??0 };
             break;
         case 'setCP':
-            newState = { ...state, cp: action.cp };
+            newState = { ...state, cp: action.cp??0 };
             break;
         case 'setXP':
-            newState = { ...state, xp: action.xp };
+            newState = { ...state, xp: action.xp??0 };
             break;
         case 'load':
             newState = action.payload;
@@ -25,8 +25,10 @@ function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, start
             break;
     }
 
+    
     // Calculate level and xpToLevel
-    let level = startLevel + Math.floor(newState.cp + newState.fp / fpCost);
+    let level = startLevel + Math.floor((newState.cp??0) + (newState.fp??0) / fpCost);
+    
     let xp = newState.xp;
     if(level === 0)
     {
@@ -40,10 +42,12 @@ function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, start
         xp -= level * xpCost;
         level++;
     }
+    
 
     newState.level = level + Number(newState.freeLevels ?? 0);
 
     newState.xpToLevel = level === 0?firstLevelXPCost:level * xpCost;
+    
     return newState;
 }
 
