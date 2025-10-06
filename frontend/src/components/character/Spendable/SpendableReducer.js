@@ -24,6 +24,10 @@ function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, start
             newState = state;
             break;
     }
+    newState.xpCost = xpCost;
+    newState.fpCost = fpCost;
+    newState.firstLevelXPCost = firstLevelXPCost;
+    newState.startLevel = startLevel;
 
     
     // Calculate level and xpToLevel
@@ -32,7 +36,7 @@ function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, start
     let xp = newState.xp;
     if(level === 0)
     {
-        if(xp > firstLevelXPCost)
+        if(xp >= firstLevelXPCost)
         {
             xp -= firstLevelXPCost;
             level ++;

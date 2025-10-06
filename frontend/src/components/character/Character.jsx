@@ -17,6 +17,25 @@ import {CharacterDispatchers} from "./CharacterDispatchers.js";
 import {reducer, attributeMap, flattenSheet, blankSheet} from "./CharacterReducer.js";
 import BMFSection from "./Spendable/BMFModal/BMFSection.jsx";
 
+function getTotalSummary(state) {
+    const allSpendables = [
+        ...Object.values(state.attributes ?? {}).flatMap(g => g),
+        ...Object.values(state.abilities ?? {}).flatMap(g => g),
+        ...(state.arts ?? []),
+        ...(state.realms ?? []),
+        ...(state.backgrounds ?? []),
+        ...(state.merits ?? []),
+        ...(state.flaws ?? []),
+    ];
+    return allSpendables.reduce(
+        (totals, item) => ({
+            fp: totals.fp + (item.fp || 0),
+            xp: totals.xp + (item.xp || 0),
+        }),
+        { cp: 0, fp: 0, xp: 0 }
+    );
+}
+
 
 function Character()
 {
@@ -105,7 +124,7 @@ function Character()
             .finally(() => setSaveRequest(null));
 
         setSaveRequest(request);
-    }, [state, saveRequest]);
+    }, [state, saveRequest, nanoid]);
 
     const attributeCols =useMemo(
         () =>
@@ -132,6 +151,9 @@ function Character()
             )),
         [state.abilities, setAbility]
     );
+
+    const totalSummary = getTotalSummary(state);
+    // ...existing code...
 
     return (
         <Container fluid>
@@ -181,7 +203,15 @@ function Character()
                         <Realms realms={state.realms} setRealm={updateRealm} />
                     </Row>
                 </Col>
-                <Col lg={12} xl={2}></Col>
+                <Col lg={12} xl={2}>
+                    <Row className="purchasable d-flex justify-content-center align-items-center">
+                        <Col><strong>Total Summary:</strong></Col>
+                        <Col sm={2} className="text-center">{totalSummary.fp}</Col>
+                        <Col sm={2} className="text-center">{totalSummary.xp}</Col>
+                        <Col sm={1}>&nbsp;</Col>
+                        <Col sm={1}>&nbsp;</Col>
+                    </Row>
+                </Col>
             </Row>
         </Container>
     );

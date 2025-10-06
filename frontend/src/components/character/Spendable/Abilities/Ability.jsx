@@ -3,7 +3,7 @@ import SpendableRow from '../SpendableRow.jsx'
 import SpendableReducer from "../SpendableReducer.js";
 
 const COSTS = {
-    XP:4,
+    XP:2,
     FP:2,
     FIRST_LEVEL:3
 };
