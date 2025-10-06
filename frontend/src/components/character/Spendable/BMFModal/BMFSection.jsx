@@ -1,6 +1,4 @@
-
 import React from 'react';
-import CollapsibleGroup from "../CollapsibleGroup.jsx";
 import BMFRow from './BMFRow.jsx';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -8,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import BMFModal from "./BMFModal.jsx";
 import reducer from "./BMFReducer.jsx";
+import CollapsibleGroupWithSummary from "../CollapsibleGroupWithSummary.jsx";
 
 
 function BMFSection({alreadyPurchased, updateField, deleteField, addNew, title})
@@ -44,27 +43,25 @@ function BMFSection({alreadyPurchased, updateField, deleteField, addNew, title})
         state={state}
     />);
 
-    const renderBackgrounds = React.useCallback(() => (
-        alreadyPurchased.map((bg, i) => (
-            <BMFRow
-                key={`background-${i}`}
-                background={bg}
-                updateBackground={updateField}
-                deleteBackground={deleteField}
-            />
-        ))
-    ), [alreadyPurchased, updateField, deleteField]);
+    const itemProps = (item) => ({
+        item,
+        updateItem: updateField,
+        deleteItem: deleteField
+    });
 
     return (
         <Container className="container-fluid">
             {modal}
             <Row>
                 <Col>
-                    <CollapsibleGroup
+                    <CollapsibleGroupWithSummary
                         title={title}
                         className="abilityUseGroup"
                         nonCollapsible={true}
-                        renderItems={renderBackgrounds}/>
+                        ItemComponent={BMFRow}
+                        itemProps={itemProps}
+                        items={alreadyPurchased}
+                    />
                 </Col>
             </Row>
             <Row>

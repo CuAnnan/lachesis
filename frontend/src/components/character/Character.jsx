@@ -96,7 +96,7 @@ function Character()
         if (state.loading || saveRequest || !state.hasChanges) return;
 
         const request = client
-            .post('/sheets', { sheet: { traits: flattenSheet(state) } })
+            .post('/sheets', { sheet:  flattenSheet(state), nanoid })
             .then(resp => {
                 console.log('Saved:', resp.data);
                 dispatch({ type: 'resetDirty' });
@@ -181,9 +181,7 @@ function Character()
                         <Realms realms={state.realms} setRealm={updateRealm} />
                     </Row>
                 </Col>
-                <Col lg={12} xl={2}>
-                    <b>Experience Summary</b>
-                </Col>
+                <Col lg={12} xl={2}></Col>
             </Row>
         </Container>
     );

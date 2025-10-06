@@ -135,6 +135,11 @@ class ObjectCache
         return key;
     }
 
+    set(key, object)
+    {
+        return this.put(key, object);
+    }
+
     /**
      * A helper function to add an object without deciding a key. For lazy people. Like me.
      * @param object The item to be cached

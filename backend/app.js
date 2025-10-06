@@ -1,12 +1,15 @@
 import express from 'express';
-import path from 'path';
 import http from 'http';
 import cors from 'cors';
 import MongoConnectionFactory from "./inc/MongoConnectionFactory.js";
+import DiscordClientContainer from "./Discord/DiscordClientContainer.js";
 
  import conf from '../conf.js';
  MongoConnectionFactory.init(conf).then(() => {
-     console.log('MongoConnectionFactory initialized');
+     console.log('MongoConnectionFactory initialized, initialising discord bot');
+     DiscordClientContainer.initialise(conf, MongoConnectionFactory.getInstance()).then(()=>{
+         console.log("Discord client container initialised");
+     });
  });
 
 
@@ -20,14 +23,14 @@ import sheetRoutes from './routes/sheets.js';
 app.use('/sheets', sheetRoutes);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function(req, res) {
     res.status(404).send("File not found")
 });
 
 
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};

@@ -4,7 +4,11 @@ import ObjectCache from "../inc/ObjectCache.js";
 const singletonMap = new WeakMap();
 class Controller
 {
+    static _objectCache;
 
+    static {
+        this._objectCache = ObjectCache.getInstance();
+    }
 
     /**
      *  @returns {ObjectCache}
@@ -22,6 +26,11 @@ class Controller
     getHost(req)
     {
         return `${req.protocol}://${req.get('Host')}`;
+    }
+
+    get objectCache()
+    {
+        return Controller._objectCache;
     }
 
     static getInstance(ctor)

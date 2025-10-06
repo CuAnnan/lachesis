@@ -1,23 +1,17 @@
 import Ability from './Ability.jsx';
-import CollapsibleGroup from "../CollapsibleGroup.jsx";
+import CollapsibleGroupWithSummary from "../CollapsibleGroupWithSummary.jsx";
 
 function AbilityUseGroup({ useGroup, abilities, setAbility })
 {
     return (
-        <CollapsibleGroup
+        <CollapsibleGroupWithSummary
             title={useGroup}
-            className="abilityUseGroup"
-            renderItems={(collapsed)=> (
-                abilities.map((ability) => (
-                    <Ability
-                        key={ability.name}
-                        ability={ability}
-                        useGroup={useGroup}
-                        collapsed={collapsed}
-                        setAbility={setAbility}
-                    />
-                )))
-            }/>
+            className="abiilityUseGroup"
+            items={abilities}
+            ItemComponent={Ability}
+            itemProps={(ability) => ({ability, setAbility })}
+            useGroup={useGroup}
+        />
     );
 }
 
