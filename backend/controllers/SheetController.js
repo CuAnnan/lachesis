@@ -1,5 +1,5 @@
 import Controller from "./Controller.js";
-import KithainSheet from "../Character Model/KithainSheet.js";
+import KithainSheet from "../../Character Model/KithainSheet.js";
 //import DiceRoll from "../Character Model/DiceRoll.js";
 import {nanoid} from "nanoid";
 

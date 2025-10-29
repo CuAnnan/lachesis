@@ -7,7 +7,7 @@ import AbilityUseGroup from "./Spendable/Abilities/AbilityUseGroup.jsx";
 import Arts from './Spendable/Arts/Arts.jsx';
 import Realms from './Spendable/Realms/Realms.jsx';
 import { useParams } from "react-router-dom";
-import {client} from "../../AxiosInterceptor.js";
+import {client} from "@inc/AxiosInterceptor.js";
 import Instructions from './Instructions.jsx';
 
 import './Character.css';
@@ -37,7 +37,7 @@ function getTotalSummary(state) {
 }
 
 
-function Character()
+function CharacterEditor()
 {
     const {nanoid} = useParams();
     const initialState = blankSheet();
@@ -217,4 +217,4 @@ function Character()
     );
 }
 
-export default Character;
+export default CharacterEditor;

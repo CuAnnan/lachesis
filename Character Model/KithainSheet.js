@@ -92,28 +92,29 @@ class KithainSheet extends Sheet
         if(traitJSON.type ==='Realm')
         {
             this.addTrait(new constructor(traitJSON.name, traitJSON.cp, traitJSON.fp, traitJSON.xp, traitJSON.name === this.favouredRealm));
+            return;
         }
         if(traitJSON.type === 'Glamour' || traitJSON.type === 'Willpower')
         {
             let trait = new constructor(traitJSON.cp, traitJSON.fp, traitJSON.xp);
             trait.setFreeLevels(traitJSON.freeLevels);
             this.addTrait(trait);
+            return;
         }
-        else if (traitJSON.name === 'Nightmare' || traitJSON.name === 'Banality')
+        if (traitJSON.name === 'Nightmare' || traitJSON.name === 'Banality')
         {
             let trait = new constructor(traitJSON.name, traitJSON.cp, traitJSON.fp, traitJSON.xp);
             trait.setFreeLevels(traitJSON.freeLevels);
             this.addTrait(trait);
+            return;
         }
-        else
+
+        let trait = new constructor(traitJSON.name, traitJSON.cp, traitJSON.fp, traitJSON.xp);
+        if(traitJSON.specialty)
         {
-            let trait = new constructor(traitJSON.name, traitJSON.cp, traitJSON.fp, traitJSON.xp);
-            if(traitJSON.specialty)
-            {
-                trait.setSpecialty(traitJSON.specialty);
-            }
-            this.addTrait(trait);
+            trait.setSpecialty(traitJSON.specialty);
         }
+        this.addTrait(trait);
     }
 
     applySplatJSON(json)
@@ -211,6 +212,16 @@ class KithainSheet extends Sheet
         return changes;
     }
 
+    get arts()
+    {
+        return this.structuredTraits.art??{};
+    }
+
+    get realms()
+    {
+        return this.structuredTraits.realm??{};
+    }
+
     getCantripPool(traits)
     {
         let pool = this.getPool(traits);
@@ -256,8 +267,8 @@ class KithainSheet extends Sheet
                 this.traits.brawl.setFreeLevels(1);
                 break;
         }
-        this.glamour = this.traits.glamour;
-        this.willpower = this.traits.willpower;
+        this.glamour = this.traits.glamour?this.traits.glamour:new Glamour(0,0,0);
+        this.willpower = this.traits.willpower?this.traits.willpower:new Willpower(0,0,0);
         this.banality = this.traits.banality;
         this.nightmare = this.traits.nightmare;
     }

@@ -11,6 +11,38 @@ class Sheet
         this.structuredTraits = {};
     }
 
+    get attributes()
+    {
+        return {
+            'physical':{strength:this.structuredTraits.attribute.strength, dexterity:this.structuredTraits.attribute.dexterity, stamina:this.structuredTraits.attribute.stamina},
+            'mental':{perception:this.structuredTraits.attribute.perception, intelligence:this.structuredTraits.attribute.intelligence, wits:this.structuredTraits.attribute.wits},
+            'social':{charisma:this.structuredTraits.attribute.charisma, manipulation:this.structuredTraits.attribute.manipulation, appearance:this.structuredTraits.attribute.appearance},
+        };
+    }
+
+    get abilities()
+    {
+        return {
+            'talents':this.structuredTraits.talent,
+            'skills':this.structuredTraits.skill,
+            'knowledges':this.structuredTraits.knowledge,
+        }
+    }
+
+    get merits()
+    {
+        return this.structuredTraits.merit || {};
+    }
+
+    get flaws()
+    {
+        return this.structuredTraits.flaw || {};
+    }
+
+    get backgrounds()
+    {
+        return this.structuredTraits.background || {};
+    }
 
     addTrait(trait)
     {
