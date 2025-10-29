@@ -67,6 +67,7 @@ function CharacterSheetUI()
             <Tabs defaultActiveKey="character" id="uncontrolled-tab-example">
                 <Tab eventKey="character" title="Character">
                     <CharacterSheetStructure
+                        nanoid={nanoid}
                         sheet={sheet}
                         isTraitSelected={isTraitSelected}
                         toggleTrait={toggleTrait}

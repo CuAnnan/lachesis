@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import {Client, Collection, Events, GatewayIntentBits} from "discord.js";
 import SheetController from "../controllers/SheetController.js";
-import DiceRoll from "../Character Model/DiceRoll.js";
+import DiceRoll from "../../Character Model/DiceRoll.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

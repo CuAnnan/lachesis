@@ -18,4 +18,8 @@ router.post('/', async(req, res, next)=>{
     controller.saveSheet(req, res).catch(next);
 });
 
+router.get('/:nanoid/qrCode', async(req, res, next)=>{
+    controller.getQRCode(req, res).catch(next);
+});
+
 export default router;

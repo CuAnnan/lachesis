@@ -43,7 +43,7 @@ h2, h3, h4, .tempers
 }
 
 /* css */
-h2 {
+h3, h2 {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -53,6 +53,8 @@ h2 {
 }
 
 /* lines either side */
+h3::before,
+h3::after,
 h2::before,
 h2::after {
     content: "";

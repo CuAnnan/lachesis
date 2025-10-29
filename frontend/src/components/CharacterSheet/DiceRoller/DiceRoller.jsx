@@ -1,6 +1,8 @@
 import {memo} from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import {DiceRoll} from "@CharacterModel/DiceRoll.js"
 
 function DiceRoller({sheet, selectedTraits})
 {
@@ -36,6 +38,13 @@ function DiceRoller({sheet, selectedTraits})
             <Col md={2} xlg={1}>
                 {pool.dicePool}
             </Col>
+        </Row>
+        <Row>
+            <Button variant="primary" onClick={
+                ()=>{
+                    console.log(pool.roll())
+                }
+            }>Roll</Button>
         </Row>
     </>;
 }

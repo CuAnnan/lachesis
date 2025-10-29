@@ -1,5 +1,7 @@
 'use strict';
 
+import DiceRoll from "./DiceRoll.js";
+
 class Sheet
 {
     constructor()

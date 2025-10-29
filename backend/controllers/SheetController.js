@@ -1,11 +1,10 @@
 import Controller from "./Controller.js";
 import KithainSheet from "../../Character Model/KithainSheet.js";
-//import DiceRoll from "../Character Model/DiceRoll.js";
-import {nanoid} from "nanoid";
-
+import QRCode from "qrcode";
 import blankSheetSchema from "../schema/blankSheetSchema.js";
-//const xp = 0, cp = 0, fp = 0;
+import conf from "../../conf.js";
 
+const webPresence = conf.frontend.url;
 
 
 
@@ -114,6 +113,14 @@ class SheetController extends Controller
     get collection()
     {
         return this.db.collection('sheets');
+    }
+
+    async getQRCode(req, res)
+    {
+        const url = `${webPresence}/sheets/view/${req.params.nanoid}`;
+        const qrCode = await QRCode.toBuffer(url);
+        res.setHeader('Content-Type', 'image/png');
+        res.send(qrCode);
     }
 }
 

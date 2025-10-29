@@ -1,13 +1,60 @@
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {memo, Fragment} from "react";
-import TraitDots from "./Traits/TraitDots.jsx";
-import TraitBoxes from "./Traits/TraitBoxes.jsx";
+import {memo, Fragment, useEffect, useState} from "react";
+import Temper from "./Traits/Temper.jsx";
 import UseGroup from "./Traits/UseGroup.jsx";
 import PersonalDetails from "./PersonalDetails.jsx";
+import {client} from '@inc/AxiosInterceptor.js';
+import TemperTrack from "./Traits/TemperTrack.jsx";
+import TraitDots from "./Traits/TraitDots.jsx"
 
-function CharacterSheetStructure({sheet, isTraitSelected, toggleTrait})
+function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
 {
+    const [qrCode, setQrCode] = useState(null);
+    const [filledHealthIndex, setFilledHealthIndex] = useState(-1);
+    console.log(sheet);
+
+    useEffect(()=>{
+        if(!nanoid) return;
+        let mounted = true;
+        let objectURL = null;
+        client.get(`/sheets/${nanoid}/qrCode`, {responseType: "blob"})
+            .then(response=>{
+                if(!mounted) return;
+                objectURL = URL.createObjectURL(response.data);
+                setQrCode(objectURL);
+            });
+        return ()=>{
+            mounted = false;
+            if(objectURL) URL.revokeObjectURL(objectURL);
+        };
+    }, [nanoid]);
+
+    const healthLevels = {"Unbruised":sheet.kith==="Troll"?(sheet.secondOathSworn?5:3):1, "-1":2, "-2":2, "Crippled":1, "Incapacitated":1};
+
+    // Build ordered groups and assign a global index to each box so clicks can fill up to that index
+    const orderedLevelKeys = ["Unbruised", "-1", "-2", "Crippled", "Incapacitated"];
+    let global = 0;
+    const groupedHealth = orderedLevelKeys.map(level => {
+        const count = healthLevels[level] || 0;
+        const boxes = Array.from({length: count}).map((_, i) => {
+            return { level, localIndex: i, globalIndex: global++ };
+        });
+        return { level, boxes };
+    });
+
+    function handleHealthClick(index) {
+        // If clicking an empty box (index > filledHealthIndex) fill up to it.
+        // If clicking a filled box, decrease by one (toggle-like behavior).
+        if (index > filledHealthIndex) {
+            setFilledHealthIndex(index);
+        } else if (index === filledHealthIndex) {
+            setFilledHealthIndex(index - 1);
+        } else {
+            setFilledHealthIndex(index);
+        }
+    }
+
     return <Fragment>
         <PersonalDetails sheet={sheet}/>
         <Row>
@@ -74,7 +121,7 @@ function CharacterSheetStructure({sheet, isTraitSelected, toggleTrait})
                     useGroup={Object.fromEntries(Object.entries(sheet.arts).filter(([,trait])=>(trait.level>0)))}
                     isTraitSelected = {isTraitSelected}
                     toggleTrait = {toggleTrait}
-                    />
+                />
             </Col>
             <Col className="useGroup">
                 <UseGroup
@@ -88,19 +135,49 @@ function CharacterSheetStructure({sheet, isTraitSelected, toggleTrait})
         <Row>
             <h2>Tempers</h2>
             <Col>
-
+                { qrCode && <img src={qrCode} alt="QR Code"/>}
             </Col>
             <Col className="tempers">
-                <Row><Col><h4>Glamour</h4></Col></Row>
+                <Temper temper={sheet.glamour}/>
+                <Temper temper={sheet.willpower}/>
                 <Row><Col>
-                    <TraitDots level={sheet.glamour.level} maxLevel={10}/>
+                    <strong>Banality</strong>
                 </Col></Row>
                 <Row><Col>
-                    <TraitBoxes level={sheet.glamour.level} maxLevel={10}/>
+                    <TraitDots level={sheet.banality || 3} maxLevel={10}/>
+                </Col></Row>
+                <Row><Col>
+                    <TemperTrack temper={sheet.temporaryBanality}/>
+                </Col></Row>
+                <Row><Col>
+                    <strong>Nightmare</strong>
+                </Col></Row>
+                <Row><Col>
+                    <TemperTrack temper={sheet.nightmare}/>
                 </Col></Row>
             </Col>
             <Col>
-
+                <Row><Col>
+                    <h4>Health levels</h4>
+                </Col></Row>
+                {groupedHealth.map(({level, boxes}) =>
+                    boxes.map((box, i) => (
+                        <Row key={level + "-" + i} className="healthLevel">
+                            <Col>{level}</Col>
+                            <Col className="text-end">
+                                <i
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => handleHealthClick(box.globalIndex)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleHealthClick(box.globalIndex); }}
+                                    className={`traitBox trait bx ${box.globalIndex <= filledHealthIndex ? "bxs-square" : "bx-square"}`}
+                                    style={{ cursor: "pointer" }}
+                                    aria-pressed={box.globalIndex <= filledHealthIndex}
+                                ></i>
+                            </Col>
+                        </Row>
+                    ))
+                )}
             </Col>
         </Row>
     </Fragment>;
