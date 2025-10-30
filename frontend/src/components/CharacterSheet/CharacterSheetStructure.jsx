@@ -96,6 +96,7 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
                         useGroup={sheet.backgrounds}
                         isTraitSelected = {isTraitSelected}
                         toggleTrait = {toggleTrait}
+                        flexible={false}
                     />
                 </Row>
                 <Row>
@@ -104,6 +105,7 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
                         useGroup={sheet.merits}
                         isTraitSelected = {isTraitSelected}
                         toggleTrait = {toggleTrait}
+                        flexible={false}
                     />
                 </Row>
                 <Row>
@@ -112,6 +114,7 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
                         useGroup={sheet.flaws}
                         isTraitSelected = {isTraitSelected}
                         toggleTrait = {toggleTrait}
+                        flexible={false}
                     />
                 </Row>
             </Col>
@@ -121,6 +124,7 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
                     useGroup={Object.fromEntries(Object.entries(sheet.arts).filter(([,trait])=>(trait.level>0)))}
                     isTraitSelected = {isTraitSelected}
                     toggleTrait = {toggleTrait}
+                    flexible={false}
                 />
             </Col>
             <Col className="useGroup">
@@ -129,6 +133,7 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
                     useGroup={Object.fromEntries(Object.entries(sheet.realms).filter(([,trait])=>(trait.level>0)))}
                     isTraitSelected = {isTraitSelected}
                     toggleTrait = {toggleTrait}
+                    flexible={false}
                 />
             </Col>
         </Row>

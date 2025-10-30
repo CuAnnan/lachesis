@@ -8,9 +8,9 @@ function ucFirst(string)
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function UseGroup({useGroupName, useGroup, isTraitSelected, toggleTrait})
+function UseGroup({useGroupName, useGroup, isTraitSelected, toggleTrait, flexible=true})
 {
-    return <Col className="useGroup">
+    return <Col className="useGroup" md={12} lg={flexible?4:12}>
         <Row><h3>{ucFirst(useGroupName)}</h3></Row>
         {Object.values(useGroup).map((trait, index) =>
             <Trait

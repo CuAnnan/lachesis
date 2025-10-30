@@ -62,8 +62,13 @@ function CharacterSheetUI()
     console.log(sheet);
 
     return <Container fluid><Row>
-        <Col></Col>
-        <Col md={7}>
+        <Col>
+            <DiceRoller
+                sheet={sheet}
+                selectedTraits={selectedTraits}
+            />
+        </Col>
+        <Col md={12} lg={7}>
             <Tabs defaultActiveKey="character" id="uncontrolled-tab-example">
                 <Tab eventKey="character" title="Character">
                     <CharacterSheetStructure
@@ -78,10 +83,6 @@ function CharacterSheetUI()
             </Tabs>
         </Col>
         <Col>
-            <DiceRoller
-                sheet={sheet}
-                selectedTraits={selectedTraits}
-            />
         </Col>
     </Row></Container>;
 }
