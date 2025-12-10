@@ -143,8 +143,8 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
                 { qrCode && <img src={qrCode} alt="QR Code"/>}
             </Col>
             <Col className="tempers">
-                <Temper temper={sheet.glamour}/>
-                <Temper temper={sheet.willpower}/>
+                <Temper temper={sheet.tempers.glamour}/>
+                <Temper temper={sheet.tempers.willpower}/>
                 <Row><Col>
                     <strong>Banality</strong>
                 </Col></Row>

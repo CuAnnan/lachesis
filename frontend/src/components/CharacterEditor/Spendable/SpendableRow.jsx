@@ -61,7 +61,7 @@ function SpendableRow({state, handleChange, collapsed})
             {
                 console.log("Shift click");
             }
-            else if(e.ctrlKey)
+            else if(e.ctrlKey || e.metaKey)
             {
                 console.log("Ctrl click");
             }

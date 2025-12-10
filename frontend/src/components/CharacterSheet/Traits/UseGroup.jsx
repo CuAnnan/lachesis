@@ -17,7 +17,11 @@ function UseGroup({useGroupName, useGroup, isTraitSelected, toggleTrait, flexibl
                 key={index}
                 trait={trait}
                 isTraitSelected={isTraitSelected(useGroupName, trait.name)}
-                toggleTrait={()=>toggleTrait(useGroupName, trait.name)}
+                toggleTrait={(e)=>{
+                    e.stopPropagation();
+                    e.preventDefault();
+                    toggleTrait(useGroupName, trait.name)
+                }}
             />
         )}
     </Col>

@@ -170,6 +170,15 @@ export const reducer = (state, action) =>
                 },
             };
 
+        case 'updateTemper':
+            const key = action.temper;
+            const updatedTemper = updateSpendable(state.tempers[key], action, action.field);
+            return {
+                ...state,
+                hasChanges:true,
+                tempers: {...state.tempers, [key]: updatedTemper},
+            };
+
         case 'updateArt':
             return {
                 ...state,
@@ -285,31 +294,31 @@ export const reducer = (state, action) =>
     }
 }
 
-export const blankSheet = (json) => (
-    {
-        loading: true,
-        error: null,
-        hasChanges: false,
-        player:json?.player,
-        chronicle:json?.chronicle,
-        kith:json?.kith,
-        house:json?.house,
-        name:json?.name,
-        court:json?.court,
-        legacies:{seelie:json?.legacies?.seelie ?? '', unseelie:json?.legacies?.unseelie ?? ''},
-        seeming:json?.seeming,
-        motley:json?.motley,
-        secondOathSworn:!!(json?.secondOathSworn),
-        glamourSpent:Number(json?.glamourSpent ?? 0),
-        willpowerSpent:Number(json?.willpowerSpent ?? 0),
-        attributes: { Physical: [], Social: [], Mental: [] },
-        abilities: { Talent: [], Skill: [], Knowledge: [] },
-        arts: [],
-        realms: [],
-        merits: [],
-        flaws: [],
-        backgrounds: [],
-    });
+export const blankSheet = (json) => ({
+    loading: true,
+    error: null,
+    hasChanges: false,
+    player:json?.player,
+    chronicle:json?.chronicle,
+    kith:json?.kith,
+    house:json?.house,
+    name:json?.name,
+    court:json?.court,
+    legacies:{seelie:json?.legacies?.seelie ?? '', unseelie:json?.legacies?.unseelie ?? ''},
+    seeming:json?.seeming,
+    motley:json?.motley,
+    secondOathSworn:!!(json?.secondOathSworn),
+    glamourSpent:Number(json?.glamourSpent ?? 0),
+    willpowerSpent:Number(json?.willpowerSpent ?? 0),
+    attributes: { Physical: [], Social: [], Mental: [] },
+    abilities: { Talent: [], Skill: [], Knowledge: [] },
+    arts: [],
+    realms: [],
+    merits: [],
+    flaws: [],
+    backgrounds: [],
+    tempers:{Glamour:{name:"Glamour"}, Willpower:{name:"Willpower"}},
+});
 
 export const attributeMap = {
     'Strength':'Physical', 'Dexterity':'Physical', 'Stamina':'Physical',
@@ -328,6 +337,7 @@ export const flattenSheet=(sheet)=>
         ...Object.values(sheet?.backgrounds ?? []),
         ...Object.values(sheet?.merits ?? []),
         ...Object.values(sheet?.flaws ?? []),
+        ...Object.values(sheet?.traits??[]),
     ]};
     delete flattened.attributes;
     delete flattened.abilities;

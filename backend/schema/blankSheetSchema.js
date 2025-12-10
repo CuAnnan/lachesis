@@ -12,6 +12,7 @@ export default {
     "seeming": "",
     "motley": null,
     "secondOathSworn": false,
+
     "glamourSpent": 0,
     "willpowerSpent": 0,
     "traits": [
@@ -278,6 +279,14 @@ export default {
         {
             "type": "Realm",
             "name": "Time",
+        },
+        {
+            "type":"Temper",
+            "name":"Glamour"
+        },
+        {
+            "type": "Temper",
+            "name":"Willpower"
         },
     ]
 };

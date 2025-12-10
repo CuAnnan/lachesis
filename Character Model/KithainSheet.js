@@ -127,6 +127,7 @@ class KithainSheet extends Sheet
         this.seeming = json.seeming;
         this.motley = json.motley;
         this.secondOathSworn = json.secondOathSworn;
+        this.tempers = {willpower:json.tempers.Willpower, glamour:json.tempers.Glamour};
         this.temporaryBanality = json.temporaryBanality?json.temporaryBanality:0;
         this.glamourSpent = json.glamourSpent?json.glamourSpent:0;
         this.willpowerSpent = json.willpowerSpent?json.willpowerSpent:0;

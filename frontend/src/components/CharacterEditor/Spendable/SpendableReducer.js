@@ -1,24 +1,27 @@
 function SpendableReducer(state, action, xpCost, fpCost, firstLevelXPCost, startLevel = 0)
 {
-    let newState;
+    let newState = {...state};
     switch (action.type) {
         case 'setNAME':
-            newState = {...state, name: action.name};
+            newState = {...newState, name: action.name};
             break;
         case 'setSPECIALTY':
-            newState = {...state, specialty: action.specialty};
+            newState = {...newState, specialty: action.specialty};
             break;
         case 'setFP':
-            newState = { ...state, fp: action.fp??0 };
+            newState = { ... newState, fp: action.fp??0 };
             break;
         case 'setCP':
-            newState = { ...state, cp: action.cp??0 };
+            newState = { ...newState, cp: action.cp??0 };
             break;
         case 'setXP':
-            newState = { ...state, xp: action.xp??0 };
+            newState = { ...newState, xp: action.xp??0 };
             break;
         case 'load':
             newState = action.payload;
+            break;
+        case 'setTemper':
+            console.log("Set temper", action);
             break;
         default:
             newState = state;

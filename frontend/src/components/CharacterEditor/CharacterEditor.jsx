@@ -9,6 +9,7 @@ import Realms from './Spendable/Realms/Realms.jsx';
 import { useParams } from "react-router-dom";
 import {client} from "@inc/AxiosInterceptor.js";
 import Instructions from './Instructions.jsx';
+import Tempers from './Spendable/Temper/Tempers.jsx';
 
 import './Character.css';
 import CharacterDetails from "./CharacterDetails/CharacterDetails.jsx";
@@ -16,6 +17,7 @@ import {CharacterDispatchers} from "./CharacterDispatchers.js";
 
 import {reducer, attributeMap, flattenSheet, blankSheet} from "./CharacterReducer.js";
 import BMFSection from "./Spendable/BMFModal/BMFSection.jsx";
+
 
 function getTotalSummary(state) {
     const allSpendables = [
@@ -62,6 +64,7 @@ function CharacterEditor()
         deleteBackground,
         deleteFlaw,
         deleteMerit,
+        updateTemper,
     } = CharacterDispatchers(dispatch);
 
     useEffect(()=>{
@@ -71,6 +74,7 @@ function CharacterEditor()
                 const data = blankSheet(json);
                 delete data.loading;
                 delete data.error;
+                console.log(data);
 
                 for(let trait of json.traits)
                 {
@@ -102,8 +106,18 @@ function CharacterEditor()
                             trait.id = getNextFlawId();
                             data.flaws.push(trait);
                             break;
+                        case 'Temper': case 'Glamour': case 'Willpower':
+                            data.tempers[trait.type] = trait;
+                            break;
                     }
+
                 }
+                if(json.tempers)
+                {
+                    data.tempers = {...json.tempers}
+                }
+
+
                 dispatch({'type':'loadData', payload:data});
             }).catch(error=>{
                 console.error(error);
@@ -153,9 +167,9 @@ function CharacterEditor()
     );
 
     const totalSummary = getTotalSummary(state);
-    // ...existing code...
 
     return (
+        state && (
         <Container fluid>
             <Row>
                 <Col lg={12} xl={2}>
@@ -199,7 +213,14 @@ function CharacterEditor()
                                 />
                             </Row>
                         </Col>
-                        <Arts arts={state.arts} setArt={updateArt} />
+                        <Col>
+                            <Row>
+                                <Tempers tempers={state.tempers} setTemper={updateTemper} />
+                            </Row>
+                            <Row>
+                                <Arts arts={state.arts} setArt={updateArt} />
+                            </Row>
+                        </Col>
                         <Realms realms={state.realms} setRealm={updateRealm} />
                     </Row>
                 </Col>
@@ -214,7 +235,7 @@ function CharacterEditor()
                 </Col>
             </Row>
         </Container>
-    );
+    ));
 }
 
 export default CharacterEditor;

@@ -59,8 +59,6 @@ function CharacterSheetUI()
     if(loading) return <Container>Loading...</Container>;
     if(error) return <Container>Error: {error}</Container>;
 
-    console.log(sheet);
-
     return <Container fluid><Row>
         <Col>
             <DiceRoller

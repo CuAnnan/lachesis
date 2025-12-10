@@ -139,6 +139,10 @@ export const CharacterDispatchers = (dispatch) => {
             dispatch({ type: "updateLegacy", court, legacy });
         };
 
+        const updateTemper = (temper, field, value) => {
+            dispatch({type: "updateTemper", temper, field, value});
+        };
+
         return {
             updateArt,
             updateRealm,
@@ -158,6 +162,7 @@ export const CharacterDispatchers = (dispatch) => {
             addFlaw,
             updateFlaw,
             deleteFlaw,
+            updateTemper
         };
     }, [dispatch, ids.background, ids.flaw, ids.merit]);
 };

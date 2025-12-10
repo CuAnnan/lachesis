@@ -86,8 +86,6 @@ class SheetController extends Controller
         }
     }
 
-
-
     async getBlankSheet(req, res)
     {
         res.status(200).json(blankSheetSchema);

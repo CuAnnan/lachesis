@@ -11,8 +11,7 @@ function Trait({trait, isTraitSelected, toggleTrait})
         <Col
             className={classNames}
             title={trait.specialty?trait.specialty:""}
-            onClick={toggleTrait}
-        >
+            onClick={toggleTrait}>
             {trait.name+(trait.specialty?"*":"")}
         </Col>
         <Col className="text-end"><TraitDots level={trait.level}/></Col>
