@@ -89,6 +89,11 @@ class KithainSheet extends Sheet
     addTraitFromJSON(traitJSON)
     {
         let constructor = constructors[traitJSON.type];
+        if(typeof constructor === 'undefined')
+        {
+            console.log(traitJSON);
+            throw new Error(`Unknown trait type: ${traitJSON.type}`);
+        }
         if(traitJSON.type ==='Realm')
         {
             this.addTrait(new constructor(traitJSON.name, traitJSON.cp, traitJSON.fp, traitJSON.xp, traitJSON.name === this.favouredRealm));

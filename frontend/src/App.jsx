@@ -11,6 +11,13 @@ function App()
             <Route path="/character" element={<CharacterEditor />} />
             <Route path="/character/:nanoid/edit" element={<CharacterEditor />} />
             <Route path="/character/:nanoid/view" element={<CharacterSheetUI />} />
+            <Route path="/characters/:nanoid/edit" element={<CharacterEditor />} />
+            <Route path="/characters/:nanoid/view" element={<CharacterSheetUI />} />
+            <Route path="/sheet" element={<CharacterEditor />} />
+            <Route path="/sheet/:nanoid/edit" element={<CharacterEditor />} />
+            <Route path="/sheet/:nanoid/view" element={<CharacterSheetUI />} />
+            <Route path="/sheets/:nanoid/edit" element={<CharacterEditor />} />
+            <Route path="/sheets/:nanoid/view" element={<CharacterSheetUI />} />
         </Route>
 
     </Routes>);
