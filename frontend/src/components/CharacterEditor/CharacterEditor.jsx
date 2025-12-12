@@ -184,7 +184,7 @@ function CharacterEditor()
                     <Row>{abilityCols}</Row>
                     <h1 className="text-center">Advantages</h1>
                     <Row>
-                        <Col>
+                        <Col className="useGroup">
                             <Row>
                                 <BMFSection
                                     title="Background"
@@ -213,7 +213,7 @@ function CharacterEditor()
                                 />
                             </Row>
                         </Col>
-                        <Col>
+                        <Col className="useGroup">
                             <Row>
                                 <Tempers tempers={state.tempers} setTemper={updateTemper} />
                             </Row>
