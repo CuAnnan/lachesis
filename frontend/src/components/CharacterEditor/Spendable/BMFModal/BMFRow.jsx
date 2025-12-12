@@ -3,7 +3,7 @@ import SpendableRow from '../SpendableRow.jsx'
 
 import reducer from "./BMFReducer.jsx";
 
-function BMFRow({item, updateItem, deleteItem, collapsed})
+function BMFRow({item, updateItem, handleDelete, collapsed})
 {
     const [state, dispatch] = React.useReducer(reducer, {});
 
@@ -21,7 +21,7 @@ function BMFRow({item, updateItem, deleteItem, collapsed})
     };
 
 
-    return (<SpendableRow handleChange={handleChange} state={state} collapsed={collapsed}/>);
+    return (<SpendableRow handleChange={handleChange} state={state} collapsed={collapsed} isDeletable={true} handleDelete={handleDelete}/>);
 }
 
 export default BMFRow;

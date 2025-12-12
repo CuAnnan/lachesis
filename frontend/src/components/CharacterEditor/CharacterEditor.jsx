@@ -191,7 +191,7 @@ function CharacterEditor()
                                     alreadyPurchased={state.backgrounds}
                                     updateField={updateBackground}
                                     addNew={addBackground}
-                                    deleteField={deleteBackground}
+                                    handleDelete={deleteBackground}
                                 />
                             </Row>
                             <Row>
@@ -200,7 +200,7 @@ function CharacterEditor()
                                     alreadyPurchased={state.merits}
                                     updateField={updateMerit}
                                     addNew={addMerit}
-                                    deleteField={deleteMerit}
+                                    handleDelete={deleteMerit}
                                     />
                             </Row>
                             <Row>
@@ -209,7 +209,7 @@ function CharacterEditor()
                                     alreadyPurchased={state.flaws}
                                     updateField={updateFlaw}
                                     addNew={addFlaw}
-                                    deleteField={deleteFlaw}
+                                    handleDelete={deleteFlaw}
                                 />
                             </Row>
                         </Col>

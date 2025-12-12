@@ -111,7 +111,7 @@ export const reducer = (state, action) =>
                     action.background
                 ]
             }
-        case "removeBackground":
+        case "deleteBackground":
             return {
                 ...state,
                 hasChanges:true,
@@ -123,7 +123,7 @@ export const reducer = (state, action) =>
                 hasChanges:true,
                 merits:[...state.merits, action.merit]
             };
-        case "removeMerit":
+        case "deleteMerit":
             return {
                 ...state,
                 hasChanges: true,
@@ -135,11 +135,12 @@ export const reducer = (state, action) =>
                 hasChanges:true,
                 flaws:[...state.flaws, action.flaw]
             };
-        case "removeFlaw":
+        case "deleteFlaw":
+
             return {
                 ...state,
                 hasChanges: true,
-                flaws: state.flaw.filter(flaw => flaw.id !== action.flawId),
+                flaws: state.flaws.filter(flaw => flaw.id !== action.flawId),
             };
 
         case 'updateAttribute':
@@ -290,6 +291,7 @@ export const reducer = (state, action) =>
             return newState;
         }
         default:
+            console.warn(`Unhandled action type ${action.type}`);
             return state;
     }
 }

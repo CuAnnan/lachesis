@@ -7,7 +7,7 @@ import {useState} from "react";
 
 import './SpendableRow.css';
 
-function SpendableRow({state, handleChange, collapsed})
+function SpendableRow({state, handleChange, handleDelete, collapsed, isDeletable=false})
 {
     const [editingSpecialty, setEditingSpecialty] = useState(false);
     const [specialtyValue, setSpecialtyValue] = useState(state.specialty || "");
@@ -63,7 +63,10 @@ function SpendableRow({state, handleChange, collapsed})
             }
             else if(e.ctrlKey || e.metaKey)
             {
-                console.log("Ctrl click");
+                if(isDeletable)
+                {
+                    handleDelete();
+                }
             }
 
         }}

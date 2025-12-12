@@ -9,7 +9,7 @@ import reducer from "./BMFReducer.jsx";
 import CollapsibleGroupWithSummary from "../CollapsibleGroupWithSummary.jsx";
 
 
-function BMFSection({alreadyPurchased, updateField, deleteField, addNew, title})
+function BMFSection({alreadyPurchased, updateField, handleDelete, addNew, title})
 {
     const [show, setShow] = React.useState(false);
     const handleClose = ()=>setShow(false);
@@ -46,7 +46,9 @@ function BMFSection({alreadyPurchased, updateField, deleteField, addNew, title})
     const itemProps = (item) => ({
         item,
         updateItem: updateField,
-        deleteItem: deleteField
+        handleDelete: ()=>{
+            handleDelete(item.id)
+        }
     });
 
     return (

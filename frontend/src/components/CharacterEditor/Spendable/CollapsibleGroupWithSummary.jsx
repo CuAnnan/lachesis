@@ -15,7 +15,7 @@ function summary(items)
     );
 }
 
-function CollapsibleGroupWithSummary({title, items, itemProps, ItemComponent, startCollapsed, nonCollapsible, useGroup})
+function CollapsibleGroupWithSummary({title, items, itemProps, ItemComponent, startCollapsed, nonCollapsible, useGroup, deletable, onDelete})
 {
     const [collapsed, setCollapsed] = useState(startCollapsed);
     const totals = summary(items);
@@ -24,7 +24,7 @@ function CollapsibleGroupWithSummary({title, items, itemProps, ItemComponent, st
             <SpendableHeaderCol title={title} collapsed={collapsed} setCollapsed={setCollapsed} nonCollapsible={nonCollapsible} />
             {items.map((item, index) => (
                 <ItemComponent
-                    key={index}
+                    key={item.id??index}
                     {...item}
                     {...itemProps(item, collapsed)}
                     collapsed={collapsed}
