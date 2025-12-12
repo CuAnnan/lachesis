@@ -127,7 +127,7 @@ function CharacterEditor()
 
     useEffect(() => {
         if (state.loading || saveRequest || !state.hasChanges) return;
-
+        console.log(state);
         const request = client
             .post('/sheets', { sheet:  flattenSheet(state), nanoid })
             .then(resp => {

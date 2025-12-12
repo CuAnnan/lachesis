@@ -17,7 +17,7 @@ function BMFSection({alreadyPurchased, updateField, deleteField, addNew, title})
     const [state, dispatch] = React.useReducer(reducer, {});
 
     React.useEffect(()=>{
-        dispatch({type:'load', payload:{name:"",cp:0,xp:0,fp:0}});
+        dispatch({type:'load', payload:{type:title, name:"",cp:0,xp:0,fp:0}});
     }, []);
 
     const handleChange = (field, value) => {
