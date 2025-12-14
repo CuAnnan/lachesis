@@ -19,12 +19,24 @@ export const CharacterDispatchers = (dispatch) => {
         const getNextFlawId = ()=> ids.flaw.current++;
 
 
-        const updateArt = (art, field, value) => {
-            dispatch({ type: "updateArt", art, field, value });
+        const updateArt = (artOrId, field, value) => {
+            // artOrId may be an object (art) or a string id/name. Normalize payload.
+            if (typeof artOrId === 'object' && artOrId !== null) {
+                dispatch({ type: "updateArt", name: artOrId.name, id: artOrId.id, field, value });
+            } else {
+                // If we only have a primitive id/name, send it as both name and id so reducer can match by id
+                const idOrName = String(artOrId);
+                dispatch({ type: "updateArt", name: idOrName, id: idOrName, field, value });
+            }
         };
 
-        const updateRealm = (realm, field, value) => {
-            dispatch({ type: "updateRealm", realm, field, value });
+        const updateRealm = (realmOrId, field, value) => {
+            if (typeof realmOrId === 'object' && realmOrId !== null) {
+                dispatch({ type: "updateRealm", name: realmOrId.name, id: realmOrId.id, field, value });
+            } else {
+                const idOrName = String(realmOrId);
+                dispatch({ type: "updateRealm", name: idOrName, id: idOrName, field, value });
+            }
         };
 
         const setAttribute = (useGroup, name, field, value) => {
@@ -50,20 +62,20 @@ export const CharacterDispatchers = (dispatch) => {
         const addFlaw = (flaw)=>{
             dispatch({
                 type: "addFlaw",
-                flaw:{...flaw, ids:ids.flaw.current++}
+                flaw:{...flaw, id:ids.flaw.current++}
             });
         };
 
         const updateFlaw = (flawId, field, value)=>{
             dispatch({
                 type: "updateFlaw",
-                flawId,
+                id: flawId,
                 field,
                 value
             })
         };
 
-        const deleteFlaw = (flawId)=>
+        const deleteFlaw = (flawId) =>
         {
             dispatch({
                 type: "deleteFlaw",
@@ -83,7 +95,7 @@ export const CharacterDispatchers = (dispatch) => {
         {
             dispatch({
                 type:'updateMerit',
-                meritId,
+                id: meritId,
                 field,
                 value
             });
@@ -107,7 +119,7 @@ export const CharacterDispatchers = (dispatch) => {
         const updateBackground = (bgId, field, value) => {
             dispatch({
                 type: "updateBackground",
-                backgroundId: bgId,
+                id: bgId,
                 field,
                 value,
             });

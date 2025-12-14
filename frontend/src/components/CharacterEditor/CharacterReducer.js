@@ -185,7 +185,8 @@ export const reducer = (state, action) =>
                 ...state,
                 hasChanges: true,
                 arts: state.arts.map(art =>
-                    art.name === action.name
+                    // Prefer matching by id when provided (supports duplicate names)
+                    (action.id ? (art.id === action.id || art.name === action.id) : art.name === action.name)
                         ? updateSpendable(art, action, action.field)
                         : art
                 ),
@@ -196,7 +197,7 @@ export const reducer = (state, action) =>
                 ...state,
                 hasChanges: true,
                 realms: state.realms.map(realm =>
-                    realm.name === action.name
+                    (action.id ? (realm.id === action.id || realm.name === action.id) : realm.name === action.name)
                         ? updateSpendable(realm, action, action.field)
                         : realm
                 ),

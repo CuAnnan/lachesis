@@ -78,36 +78,40 @@ function CharacterEditor()
 
                 for(let trait of json.traits)
                 {
-                    switch(trait.type)
+                    const ttype = (trait.type || '').toLowerCase();
+                    switch(ttype)
                     {
-                        case 'Attribute':
+                        case 'attribute':
                             data.attributes[attributeMap[trait.name]].push(trait);
                             break;
-                        case 'Talent':
-                        case 'Skill':
-                        case 'Knowledge':
-                            data.abilities[trait.type].push(trait);
+                        case 'talent': case 'skill': case 'knowledge':
+                            // trait.type may be 'talent' | 'skill' | 'knowledge'
+                            data.abilities[trait.type.charAt(0).toUpperCase() + trait.type.slice(1)].push(trait);
                             break;
-                        case 'Realm':
+                        case 'realm':
                             data.realms.push(trait);
                             break;
-                        case 'Art':
+                        case 'art':
                             arts.push(trait);
                             break;
-                        case 'Background':
+                        case 'background':
                             trait.id = getNextBackgroundId();
                             data.backgrounds.push(trait);
                             break;
-                        case 'Merit':
+                        case 'merit':
                             trait.id = getNextMeritId();
                             data.merits.push(trait);
                             break;
-                        case 'Flaw':
+                        case 'flaw':
                             trait.id = getNextFlawId();
                             data.flaws.push(trait);
                             break;
-                        case 'Temper': case 'Glamour': case 'Willpower':
+                        case 'temper': case 'glamour': case 'willpower':
+                            // preserve as-is; temper types might be capitalized in some sheets
                             data.tempers[trait.type] = trait;
+                            break;
+                        default:
+                            // unknown trait type — ignore
                             break;
                     }
                 }

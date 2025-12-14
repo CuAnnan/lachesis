@@ -26,12 +26,13 @@ function CharacterSheetUI()
 
     const [selectedTraits, setSelectedTraits] = useState({});
 
-    const keyFor = (useGroupName, traitName) => `${useGroupName}:${traitName}`;
-    const isTraitSelected = (useGroupName, traitName) => selectedTraits[keyFor(useGroupName, traitName)] || false;
-    const toggleTrait = (useGroupName, traitName) => {
+    const keyFor = (useGroupName, traitIdOrName) => `${useGroupName}:${traitIdOrName}`;
+    const isTraitSelected = (useGroupName, traitIdOrName) => selectedTraits[keyFor(useGroupName, traitIdOrName)] || false;
+    const toggleTrait = (useGroupName, traitIdOrName) => {
+        const key = keyFor(useGroupName, traitIdOrName);
         setSelectedTraits(prevState => ({
             ...prevState,
-            [keyFor(useGroupName, traitName)]: !isTraitSelected(useGroupName, traitName)
+            [key]: !prevState[key]
         }));
     };
 
@@ -44,18 +45,31 @@ function CharacterSheetUI()
 
         client.get(`/sheets/fetch/${nanoid || ''}`)
             .then(async res=> {
-                setSheet(
-                    await KithainSheet.fromJSON(res.data)
-                );
-            }).catch(err=> {
-                if(!mounted) return;
-                setError(err?.message || 'Unknown error');
-                setSheet(null);
-        }).finally(()=>{
-            if(!mounted) return;
-            setLoading(false);
-        })
-    },[nanoid]);
+                const loaded = await KithainSheet.fromJSON(res.data);
+                // Assign stable ids to every trait instance so duplicates can be selected independently
+                let counter = 1;
+                const st = loaded.structuredTraits || {};
+                for(const category of Object.values(st)){
+                    for(const key of Object.keys(category)){
+                        const entry = category[key];
+                        if(Array.isArray(entry)){
+                            for(const t of entry){ if(!t.id) t.id = `t${counter++}`; }
+                        }
+                        else if(entry && !entry.id){ entry.id = `t${counter++}`; }
+                    }
+                }
+                // Reset selection when loading a new sheet
+                setSelectedTraits({});
+                setSheet(loaded);
+             }).catch(err=> {
+                 if(!mounted) return;
+                 setError(err?.message || 'Unknown error');
+                 setSheet(null);
+         }).finally(()=>{
+             if(!mounted) return;
+             setLoading(false);
+         })
+     },[nanoid]);
 
     if(loading) return <Container>Loading...</Container>;
     if(error) return <Container>Error: {error}</Container>;

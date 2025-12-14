@@ -71,47 +71,164 @@ class Sheet
         {
             traitKey += (trait.specialty?('-'+trait.specialty):'');
         }
-        this.traits[traitKey] = trait;
 
+        // Store in the flat traits index. Support multiple traits with the same name by turning the value
+        // into an array if necessary (backwards-compatible with single-trait consumers).
+        let existingIndexEntry = this.traits[traitKey];
+        if(!existingIndexEntry)
+        {
+            this.traits[traitKey] = trait;
+        }
+        else if(Array.isArray(existingIndexEntry))
+        {
+            existingIndexEntry.push(trait);
+        }
+        else
+        {
+            this.traits[traitKey] = [existingIndexEntry, trait];
+        }
+
+        // Maintain structuredTraits per category, also allowing multiple traits under the same key.
         if(!this.structuredTraits[cName])
         {
-
             this.structuredTraits[cName] = {};
         }
-        this.structuredTraits[cName][traitKey] = trait;
+        let existingStructured = this.structuredTraits[cName][traitKey];
+        if(!existingStructured)
+        {
+            this.structuredTraits[cName][traitKey] = trait;
+        }
+        else if(Array.isArray(existingStructured))
+        {
+            existingStructured.push(trait);
+        }
+        else
+        {
+            this.structuredTraits[cName][traitKey] = [existingStructured, trait];
+        }
     }
 
     toJSON()
     {
+        // Serialize to a flat array of trait JSON objects so duplicates are preserved.
+        let traitsArray = [];
+        for(let key of Object.keys(this.traits))
+        {
+            let entry = this.traits[key];
+            if(Array.isArray(entry))
+            {
+                for(let t of entry)
+                {
+                    traitsArray.push(t.toJSON());
+                }
+            }
+            else if(entry)
+            {
+                traitsArray.push(entry.toJSON());
+            }
+        }
 
+        return {
+            name: this.name,
+            player: this.player,
+            chronicle: this.chronicle,
+            traits: traitsArray
+        };
     }
 
 
     getPool(traitNames)
     {
         let poolData = {
-            traits:traitNames,
+            traits:[],
             dicePool:0,
             valid:true
         };
+
         for(let traitName of traitNames)
         {
-            if(Number.isNaN(parseInt(traitName)))
+            // numeric literal contributor
+            if(!Number.isNaN(parseInt(traitName)))
             {
-                let trait = this.traits[traitName.toLowerCase()];
-                if(!trait)
+                poolData.dicePool += Math.floor(traitName);
+                poolData.traits.push(String(traitName));
+                continue;
+            }
+
+            // Try to resolve traitName as an id first. Search structuredTraits for a matching id.
+            let foundById = null;
+            for(const category of Object.values(this.structuredTraits))
+            {
+                for(const entry of Object.values(category))
                 {
-                    throw new Error("Trait "+traitName+" not found");
+                    if(Array.isArray(entry))
+                    {
+                        const match = entry.find(t => t.id === traitName);
+                        if(match){ foundById = match; break; }
+                    }
+                    else if(entry && entry.id === traitName)
+                    {
+                        foundById = entry;
+                        break;
+                    }
                 }
-                poolData.dicePool += trait.level;
-                if(!trait.canRollUnlearned && trait.level === 0)
+                if(foundById) break;
+            }
+
+            if(foundById)
+            {
+                poolData.traits.push(foundById.name);
+                poolData.dicePool += foundById.level;
+                if(!foundById.canRollUnlearned && foundById.level === 0)
                 {
                     poolData.valid = false;
+                }
+                continue;
+            }
+
+            // Fallback: treat traitName as a display name, lookup by lowercased key (may be array when duplicates exist)
+            const key = traitName.toLowerCase();
+            let traitEntry = this.traits[key];
+            if(!traitEntry)
+            {
+                throw new Error("Trait "+traitName+" not found");
+            }
+
+            poolData.traits.push(traitName);
+
+            if(Array.isArray(traitEntry))
+            {
+                // Try to find a single trait in the array that matches the requested display name (case-insensitive).
+                // This lets the UI select one duplicate by name when duplicates also differ by specialty; if there
+                // is an exact match by trait.name use that single trait. If not, fall back to summing all (legacy behaviour).
+                const matchByName = traitEntry.find(t => t.name && t.name.toLowerCase() === traitName.toLowerCase());
+                if(matchByName)
+                {
+                    poolData.dicePool += matchByName.level;
+                    if(!matchByName.canRollUnlearned && matchByName.level === 0)
+                    {
+                        poolData.valid = false;
+                    }
+                }
+                else
+                {
+                    for(let trait of traitEntry)
+                    {
+                        poolData.dicePool += trait.level;
+                        if(!trait.canRollUnlearned && trait.level === 0)
+                        {
+                            poolData.valid = false;
+                        }
+                    }
                 }
             }
             else
             {
-                poolData.dicePool += Math.floor(traitName);
+                poolData.dicePool += traitEntry.level;
+                if(!traitEntry.canRollUnlearned && traitEntry.level === 0)
+                {
+                    poolData.valid = false;
+                }
             }
 
         }
@@ -144,6 +261,10 @@ class Sheet
         {
             trait.favoured = traitJSON.favoured;
         }
+        if(typeof traitJSON.id !== 'undefined')
+        {
+            trait.id = traitJSON.id;
+        }
 
         this.addTrait(trait);
     }
@@ -151,8 +272,16 @@ class Sheet
     static async fromJSON(json)
     {
         let sheet = new this();
+        // Ensure every trait JSON has a stable id so the model-level deserialization produces trait instances with ids.
+        let idCounter = 1;
         for(let traitJSON of json.traits)
         {
+            if(typeof traitJSON.id === 'undefined' || traitJSON.id === null || traitJSON.id === '')
+            {
+                // Prefer a type-prefixed id when possible
+                const prefix = (traitJSON.type || 't').toString().toLowerCase();
+                traitJSON.id = `${prefix}-${Date.now().toString(36)}-${idCounter++}`;
+            }
             sheet.addTraitFromJSON(traitJSON);
         }
         sheet.name = json.name;

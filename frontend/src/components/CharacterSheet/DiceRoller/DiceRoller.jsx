@@ -13,10 +13,31 @@ function DiceRoller({sheet, selectedTraits})
     {
         if(selected)
         {
-            const [,trait] = key.split(":");
-            traits.push(trait.toLowerCase());
+            const [,idOrName] = key.split(":");
+            let traitName = idOrName;
+            // If the idOrName looks like an assigned id (e.g., starts with 't') or doesn't match any trait name,
+            // try to resolve it to a trait name by searching the sheet's structuredTraits.
+            if(sheet && sheet.structuredTraits)
+            {
+                let found = null;
+                for(const category of Object.values(sheet.structuredTraits)){
+                    for(const entry of Object.values(category)){
+                        if(Array.isArray(entry)){
+                            const match = entry.find(t => t.id === idOrName);
+                            if(match){ found = match; break; }
+                        }
+                        else if(entry && entry.id === idOrName){ found = entry; break; }
+                    }
+                    if(found) break;
+                }
+                // If we found a trait by id, keep the id so the Sheet.getPool() method can resolve it
+                if(found) traitName = idOrName;
+            }
+            // Push the raw idOrName (ids preserved), or lowercased name when it's a literal name
+            traits.push(traitName);
         }
     }
+
     const [result, setResult] = useState({});
     // Clear the current roll results whenever selected traits change
     useEffect(() => {
@@ -28,6 +49,7 @@ function DiceRoller({sheet, selectedTraits})
     const [specialty, setSpecialty] = useState(false);
 
     const pool = sheet.getPool(traits);
+    console.log(pool);
 
     if(!pool.dicePool)
         return <></>;

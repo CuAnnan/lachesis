@@ -51,7 +51,9 @@ class Trait
             cp:this.cp,
             xp:this.xp,
             fp:this.fp,
-            freeLevels:this.freeLevels
+            freeLevels:this.freeLevels,
+            // persist id when present so the UI and other clients can reference distinct instances
+            id: this.id
         };
     }
 
@@ -59,9 +61,15 @@ class Trait
     {
         let trait = new this(json.name, json.cp?json.cp:0, json.fp?json.fp:0, json.xp?json.xp:0);
         trait.setFreeLevels(json.freeLevels);
+        if(typeof json.id !== 'undefined')
+        {
+            trait.id = json.id;
+        }
         return trait;
     }
 }
+
+
 Trait.BASE = 0;
 Trait.XP_COST = 1;
 Trait.FP_COST = 1;
@@ -167,4 +175,3 @@ Willpower.TYPE = 'willpower';
 export {
     Trait, Attribute, Ability, Talent, Skill, Knowledge, Art, Realm, Background, Glamour, Willpower, Flaw, Merit
 };
-

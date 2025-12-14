@@ -14,7 +14,7 @@ function BMFRow({item, updateItem, handleDelete, collapsed})
     const handleChange = (field, value) => {
         dispatch({
             type: `set${field.toUpperCase()}`,
-            [field]: Number(value ?? 0),
+            [field]: field === 'specialty' ? (value ?? '') : Number(value ?? 0),
         });
 
         updateItem(item.id, field, value);

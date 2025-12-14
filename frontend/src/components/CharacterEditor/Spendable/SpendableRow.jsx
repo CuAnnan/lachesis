@@ -77,6 +77,7 @@ function SpendableRow({state, handleChange, handleDelete, collapsed, isDeletable
             <Form.Control
                 type="text"
                 value={state.cp?state.cp:0}
+                onClick={e=>e.stopPropagation()}
                 onChange={e => handleChange('cp', Number(e.target.value))}
             />
         </Col>
@@ -84,6 +85,7 @@ function SpendableRow({state, handleChange, handleDelete, collapsed, isDeletable
             <Form.Control
                 type="text"
                 value={state.fp?state.fp:0}
+                onClick={e=>e.stopPropagation()}
                 onChange={e => handleChange('fp', Number(e.target.value))}
             />
         </Col>
@@ -91,6 +93,7 @@ function SpendableRow({state, handleChange, handleDelete, collapsed, isDeletable
             <Form.Control
                 type="text"
                 value={state.xp?state.xp:0}
+                onClick={e=>e.stopPropagation()}
                 onChange={e => handleChange('xp', Number(e.target.value))}
             />
         </Col>

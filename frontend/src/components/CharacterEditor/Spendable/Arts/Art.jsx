@@ -30,7 +30,8 @@ function Art({art, setArt, collapsed})
             [field]: value ? parseInt(value) : 0,
         });
 
-        setArt(art.name, field, value);
+        // Pass the stable id when present so reducers can target the exact art instance; fall back to name.
+        setArt(art.id ?? art.name, field, value);
     };
 
     return (<SpendableRow state={state} handleChange={handleChange} collapsed={collapsed} />);

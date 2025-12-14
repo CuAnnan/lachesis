@@ -45,23 +45,25 @@ class KithainSheet extends Sheet
 
     toJSON()
     {
-        let json = {
-            kith:this.kith, house:this.house, name:this.name, player:this.player, chronicle:this.chronicle, court:this.court, legacies:this.legacies, seeming:this.seeming, motley:this.motley, secondOathSworn:this.secondOathSworn, traits:[],
-            glamourSpent:this.glamourSpent, willpowerSpent:this.willpowerSpent, temporaryBanality:this.temporaryBanality, imbalance:this.imbalance,
+        // Use base Sheet serialization which already produces a flat array of trait JSON
+        const base = super.toJSON();
+        return {
+            kith: this.kith,
+            house: this.house,
+            name: this.name,
+            player: this.player,
+            chronicle: this.chronicle,
+            court: this.court,
+            legacies: this.legacies,
+            seeming: this.seeming,
+            motley: this.motley,
+            secondOathSworn: this.secondOathSworn,
+            traits: base.traits,
+            glamourSpent: this.glamourSpent,
+            willpowerSpent: this.willpowerSpent,
+            temporaryBanality: this.temporaryBanality,
+            imbalance: this.imbalance,
         };
-        for(let [_key, trait] of Object.entries(this.traits))
-        {
-            try
-            {
-                json.traits.push(trait.toJSON());
-            }
-            catch(e)
-            {
-                console.warn('Trait not parsing json');
-                console.log(trait);
-            }
-        }
-        return json;
     }
 
     increaseNightmare(amount)
