@@ -72,6 +72,7 @@ function SpendableRow({state, handleChange, handleDelete, collapsed, isDeletable
         }}
     >
         {stateNameColumn}
+        <Col sm={1}>{state.level?state.level:0}</Col>
         <Col sm={2}>
             <Form.Control
                 type="text"
@@ -94,7 +95,6 @@ function SpendableRow({state, handleChange, handleDelete, collapsed, isDeletable
             />
         </Col>
         <Col sm={1}>{state.xpToLevel?state.xpToLevel :4}</Col>
-        <Col sm={1}>{state.level?state.level:0}</Col>
     </Row>);
 }
 

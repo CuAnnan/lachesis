@@ -19,11 +19,11 @@ function SpendableHeaderCol({title, collapsed, setCollapsed, nonCollapsible})
         </Row>
         <Row className="columnTitles text-center">
             <Col></Col>
+            <Col sm={1}>lvl</Col>
             <Col sm={2}>CP</Col>
             <Col sm={2}>FP</Col>
             <Col sm={2}>XP</Col>
             <Col sm={1}>cost</Col>
-            <Col sm={1}>lvl</Col>
         </Row>
     </>;
 }

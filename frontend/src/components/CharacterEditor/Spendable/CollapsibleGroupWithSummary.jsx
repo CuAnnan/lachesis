@@ -34,10 +34,10 @@ function CollapsibleGroupWithSummary({title, items, itemProps, ItemComponent, st
             ))}
             <Row className="purchasable d-flex justify-content-center align-items-center">
                 <Col>Summary:</Col>
+                <Col sm={1}>&nbsp;</Col>
                 <Col sm={2} className="text-center">{totals.cp}</Col>
                 <Col sm={2} className="text-center">{totals.fp}</Col>
                 <Col sm={2} className="text-center">{totals.xp}</Col>
-                <Col sm={1}>&nbsp;</Col>
                 <Col sm={1}>&nbsp;</Col>
             </Row>
         </Col>
