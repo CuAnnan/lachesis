@@ -1,6 +1,22 @@
 'use strict';
 
-import DiceRoll from "./DiceRoll.js";
+import { Trait, Attribute, Ability, Talent, Skill, Knowledge, Art, Realm, Background, Glamour, Willpower, Flaw, Merit } from "./Traits.js";
+
+const TYPE_MAP = {
+    trait: Trait,
+    attribute: Attribute,
+    ability: Ability,
+    talent: Talent,
+    skill: Skill,
+    knowledge: Knowledge,
+    art: Art,
+    realm: Realm,
+    background: Background,
+    merit: Merit,
+    flaw: Flaw,
+    glamour: Glamour,
+    willpower: Willpower
+};
 
 class Sheet
 {
@@ -48,7 +64,8 @@ class Sheet
 
     addTrait(trait)
     {
-        let cName = trait.constructor.name.toLowerCase();
+        // Prefer an explicit runtime type (trait.type) or a static TYPE constant; fall back to constructor.name
+        let cName = (trait.type || trait.constructor.TYPE || trait.constructor.name).toLowerCase();
         let traitKey = trait.name.toLowerCase();
         if(cName === 'background')
         {
@@ -58,6 +75,7 @@ class Sheet
 
         if(!this.structuredTraits[cName])
         {
+
             this.structuredTraits[cName] = {};
         }
         this.structuredTraits[cName][traitKey] = trait;
@@ -112,6 +130,22 @@ class Sheet
 
     addTraitFromJSON(traitJSON)
     {
+        // Use the explicit type field (added to Trait.toJSON) to find the right class
+        let type = (traitJSON.type || 'trait').toLowerCase();
+        let Klass = TYPE_MAP[type] || Trait;
+        // Use the class's static fromJSON to construct (it uses `this` so it will create an instance of the right subclass)
+        let trait = Klass.fromJSON ? Klass.fromJSON(traitJSON) : new Klass(traitJSON.name, traitJSON.cp?traitJSON.cp:0, traitJSON.fp?traitJSON.fp:0, traitJSON.xp?traitJSON.xp:0);
+        // restore specialty and other properties that aren't handled by fromJSON
+        if(traitJSON.specialty)
+        {
+            trait.specialty = traitJSON.specialty;
+        }
+        if(typeof traitJSON.favoured !== 'undefined')
+        {
+            trait.favoured = traitJSON.favoured;
+        }
+
+        this.addTrait(trait);
     }
 
     static async fromJSON(json)

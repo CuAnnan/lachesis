@@ -9,6 +9,8 @@ class Trait
       this.xp = xp?xp:0;
       this.freeLevels = 0;
       this.canRollUnlearned = this.constructor.CAN_ROLL_UNLEARNED;
+      // set an explicit type property that will survive minification
+      this.type = (this.constructor.TYPE || this.constructor.name).toLowerCase();
       this.calculateLevel();
       this.specialty = null;
     }
@@ -42,7 +44,8 @@ class Trait
     toJSON()
     {
         return {
-            type:this.constructor.name,
+            // use the explicit instance type (stable across minification)
+            type:this.type,
             specialty:this.specialty,
             name:this.name,
             cp:this.cp,
@@ -109,6 +112,7 @@ Glamour.XP_COST = 3;
 Glamour.FP_COST = 3;
 Glamour.BASE = 4;
 
+
 class Willpower extends Trait
 {
   constructor(cp, fp, xp)
@@ -145,8 +149,22 @@ Background.FP_COST = 1;
 class Merit extends Background{}
 class Flaw extends Background{}
 
+// Explicit TYPE constants to avoid relying on constructor.name at runtime (minifiers rename names)
+Trait.TYPE = 'trait';
+Attribute.TYPE = 'attribute';
+Ability.TYPE = 'ability';
+Talent.TYPE = 'talent';
+Skill.TYPE = 'skill';
+Knowledge.TYPE = 'knowledge';
+Art.TYPE = 'art';
+Realm.TYPE = 'realm';
+Background.TYPE = 'background';
+Merit.TYPE = 'merit';
+Flaw.TYPE = 'flaw';
+Glamour.TYPE = 'glamour';
+Willpower.TYPE = 'willpower';
+
 export {
     Trait, Attribute, Ability, Talent, Skill, Knowledge, Art, Realm, Background, Glamour, Willpower, Flaw, Merit
 };
-
 
