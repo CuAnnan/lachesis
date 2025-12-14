@@ -122,7 +122,7 @@ class DiceRoll
         }
         
         let dice = [];
-        let hasAnySuccesses = false;
+        let hasAnySuccesses = !!this.willpower;
         let successes = this.willpower?1:0;
         let hasAny1s = false;
         let faces = [];
