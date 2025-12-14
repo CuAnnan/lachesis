@@ -1,4 +1,4 @@
-import {useState, memo} from "react";
+import {useState, memo, useEffect} from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
@@ -18,6 +18,10 @@ function DiceRoller({sheet, selectedTraits})
         }
     }
     const [result, setResult] = useState({});
+    // Clear the current roll results whenever selected traits change
+    useEffect(() => {
+        setResult({});
+    }, [selectedTraits]);
     const [difficulty, setDifficulty] = useState(6);
     const [willpower, setWillpower] = useState(false);
     const [wyrdInvoked, setWyrdInvoked] = useState(false);
@@ -53,7 +57,10 @@ function DiceRoller({sheet, selectedTraits})
                 <Form.Check
                     id="willpower"
                     placeholder="Jane Doe"
-                    onChange={(e)=>setWillpower(e.target.checked)}
+                    onChange={(e)=>{
+                        setResult({});
+                        setWillpower(e.target.checked);
+                    }}
                 />
             </Col>
         </Row>
@@ -64,7 +71,10 @@ function DiceRoller({sheet, selectedTraits})
             <Col className="text-start">
                 <Form.Check
                     id="spec"
-                    onChange={(e)=>setSpecialty(e.target.checked)}
+                    onChange={(e)=>{
+                        setResult({});
+                        setSpecialty(e.target.checked);
+                    }}
                 />
             </Col>
         </Row>
@@ -77,7 +87,10 @@ function DiceRoller({sheet, selectedTraits})
                     id="difficulty"
                     type="number"
                     value={difficulty}
-                    onChange={(e)=>setDifficulty(parseInt(e.target.value))}
+                    onChange={(e)=>{
+                        setResult({});
+                        setDifficulty(parseInt(e.target.value));
+                    }}
                 />
             </Col>
         </Row>
