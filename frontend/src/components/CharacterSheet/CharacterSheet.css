@@ -5,6 +5,15 @@
     cursor:pointer;
 }
 
+/* Ensure trait names don't wrap and get truncated with an ellipsis when too long.
+   min-width: 0 allows the flex item to shrink in modern browsers (necessary for text-overflow to work in flex layouts). */
+.traitName {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 
 @media print {
     body {
