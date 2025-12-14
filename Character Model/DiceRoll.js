@@ -143,6 +143,8 @@ class DiceRoll
         this.result = {
             valid:this.valid,
             specialty:this.specialty,
+            willpower:this.willpower,
+            wyrd:this.wyrd,
             traits:this.traits,
             diff:this.diff,
             botch,
