@@ -16,11 +16,13 @@ function Art({art, setArt, collapsed})
         return SpendableReducer(state, action, COSTS.XP, COSTS.FP, COSTS.FIRST_LEVEL);
     }
 
-    const [state, dispatch] = React.useReducer(reducer, {});
+    // Initialize reducer with the incoming art to avoid an empty flash
+    const [state, dispatch] = React.useReducer(reducer, art || {});
 
+    // Reload reducer state whenever the art prop changes
     React.useEffect(()=>{
         dispatch({type:'load', payload:art});
-    },[]);
+    },[art]);
 
     const handleChange = (field, value)=>{
         dispatch({

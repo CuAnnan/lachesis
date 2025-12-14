@@ -171,15 +171,15 @@ export const reducer = (state, action) =>
                 },
             };
 
-        case 'updateTemper':
-            const key = action.temper;
-            const updatedTemper = updateSpendable(state.tempers[key], action, action.field);
+        case 'updateTemper': {
+            let key = action.temper;
+            let updatedTemper = updateSpendable(state.tempers[key], action, action.field);
             return {
                 ...state,
-                hasChanges:true,
+                hasChanges: true,
                 tempers: {...state.tempers, [key]: updatedTemper},
             };
-
+        }
         case 'updateArt':
             return {
                 ...state,
@@ -296,6 +296,24 @@ export const reducer = (state, action) =>
     }
 }
 
+const blankArt = (name)=>
+{
+    return {
+        "type": "Art",
+        name,
+        "cp": 0,
+        "xp": 0,
+        "fp": 0,
+        "level": 0,
+        "xpToLevel": 7
+    }
+}
+
+const artNames = [
+    "Autumn", "Chicanery", "Chronos", "Contract", "Dragon's Ire", "Dream Craft", "Infusion", "Legerdemain", "Metamorphosis", "Naming",
+    "Oneiromancy", "Primal", "Pyretics", "Skycraft", "Soothsay", "Sovereign", "Spring", "Summer", "Talecraft", "Wayfare", "Winter"
+];
+
 export const blankSheet = (json) => ({
     loading: true,
     error: null,
@@ -314,7 +332,7 @@ export const blankSheet = (json) => ({
     willpowerSpent:Number(json?.willpowerSpent ?? 0),
     attributes: { Physical: [], Social: [], Mental: [] },
     abilities: { Talent: [], Skill: [], Knowledge: [] },
-    arts: [],
+    arts: artNames.map(blankArt),
     realms: [],
     merits: [],
     flaws: [],

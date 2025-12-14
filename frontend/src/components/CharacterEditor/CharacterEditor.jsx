@@ -74,7 +74,7 @@ function CharacterEditor()
                 const data = blankSheet(json);
                 delete data.loading;
                 delete data.error;
-                console.log(data);
+                const arts = [];
 
                 for(let trait of json.traits)
                 {
@@ -92,7 +92,7 @@ function CharacterEditor()
                             data.realms.push(trait);
                             break;
                         case 'Art':
-                            data.arts.push(trait);
+                            arts.push(trait);
                             break;
                         case 'Background':
                             trait.id = getNextBackgroundId();
@@ -110,8 +110,19 @@ function CharacterEditor()
                             data.tempers[trait.type] = trait;
                             break;
                     }
-
                 }
+                // Merge incoming arts with default arts, overwriting only when core fields differ
+                if (arts.length) {
+                    const coreKeys = ['cp','fp','xp','level','xpToLevel'];
+                    const mergedArts = data.arts.map(defaultArt => {
+                        const incoming = arts.find(a => a.name === defaultArt.name);
+                        if (!incoming) return defaultArt;
+                        const differs = coreKeys.some(k => Number(defaultArt[k] ?? 0) !== Number(incoming[k] ?? 0));
+                        return differs ? {...incoming} : defaultArt;
+                    });
+                    data.arts = mergedArts;
+                }
+
                 if(json.tempers)
                 {
                     data.tempers = {...json.tempers}
