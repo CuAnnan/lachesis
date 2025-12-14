@@ -26,10 +26,13 @@ export default({controller, DiceRoll})=> ({
     ,
     async execute(interaction) {
 
+        console.log("roll command");
+
         let poolData = null;
 
 
         let {parts, diff, mods} = rollParser(interaction, helpText);
+
 
         if(Number.isNaN(parseInt(parts)))
         {
