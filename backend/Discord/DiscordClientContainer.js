@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
-import {Client, Collection, Events, GatewayIntentBits} from "discord.js";
+import {Client, Collection, Events, GatewayIntentBits, MessageFlags} from "discord.js";
 import SheetController from "../Controllers/SheetController.js";
 import DiceRoll from "../../Character Model/DiceRoll.js";
 const __filename = fileURLToPath(import.meta.url);
@@ -71,7 +71,7 @@ class DiscordClientContainer
                 await command.execute(interaction);
             } catch (error) {
                 console.error('Discord-Bot: '+ error.message);
-                await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+                await interaction.reply({ content: 'There was an error while executing this command!', flags:MessageFlags.Ephemeral});
             }
         });
 
