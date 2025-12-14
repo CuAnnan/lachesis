@@ -105,15 +105,11 @@ function DiceRoller({sheet, selectedTraits})
                 <strong>Difficulty:</strong>
             </Form.Label>
             <Col md={2} xlg={1}>
-                <Form.Control
-                    id="difficulty"
-                    type="number"
-                    value={difficulty}
-                    onChange={(e)=>{
-                        setResult({});
-                        setDifficulty(parseInt(e.target.value));
-                    }}
-                />
+                <Form.Select id={difficulty} value={difficulty} onChange={(e)=>{setResult({}); setDifficulty(parseInt(e.target.value));}}>
+                    {[3, 4, 5, 6,7,8,9,10].map((diff)=>
+                        <option key={diff} value={diff}>{diff}</option>
+                    )}
+                </Form.Select>
             </Col>
         </Row>
         <Row className="align-items-center">
