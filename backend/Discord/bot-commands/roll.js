@@ -68,9 +68,9 @@ export default({controller, DiceRoll})=> ({
         let result = roll.resolve();
         let dice = result.faces.sort((a,b)=>a-b).map((x)=>x === 1?`__*${x}*__`:(x >= roll.diff?`**${x}**`:x));
         let content = `**Pool:** ${roll.traits.join(' + ')}\n**Difficulty:** ${roll.diff}`;
-        if(result.willpower) content += `\n**Willpower used**`;
-        if(result.wyrd) content += `\n**Wyrd roll**`;
-        if(result.specialty) content += `\n**Specialty roll**`;
+        if(result.mods.willpower) content += `\n**Willpower used**`;
+        if(result.mods.wyrd) content += `\n**Wyrd roll**`;
+        if(result.mods.specialty) content += `\n**Specialty roll**`;
 
         content += `\n**Result:** ${result.result}\n**Dice:** ${dice.join(" ")}\n**Successes:** ${result.successes}`;
 
