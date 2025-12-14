@@ -12,10 +12,7 @@ function Trait({trait, isTraitSelected, toggleTrait})
             className={classNames}
             title={trait.specialty?trait.specialty:""}
             onClick={toggleTrait}>
-            {trait.name+(trait.specialty?"*":"")}
-        </Col>
-        <Col>
-            {trait.specialty?trait.specialty:""}
+            {trait.name+(trait.specialty?` (${trait.specialty})`:"")}
         </Col>
         <Col className="text-end"><TraitDots level={trait.level}/></Col>
     </Row>
