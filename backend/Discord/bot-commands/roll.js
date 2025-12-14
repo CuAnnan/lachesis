@@ -54,8 +54,6 @@ export default({controller, DiceRoll})=> ({
             }
             catch(e)
             {
-                console.log(e);
-                console.log(e.message);
                 await interaction.reply({content:e.message, flags: MessageFlags.Ephemeral});
                 return;
             }
@@ -76,7 +74,13 @@ export default({controller, DiceRoll})=> ({
 
         let result = roll.resolve();
         let dice = result.faces.sort((a,b)=>a-b).map((x)=>x === 1?`__*${x}*__`:(x >= roll.diff?`**${x}**`:x));
+        let content = `**Pool:** ${roll.traits.join(' + ')}\n**Difficulty:** ${roll.diff}`;
+        if(result.willpower) content += `\n**Willpower used**`;
+        if(result.wyrd) content += `\n**Wyrd roll**`;
+        if(result.specialty) content += `\n**Specialty roll**`;
 
-        interaction.reply({content:`**Pool:** ${roll.traits.join(' + ')}\n**Difficulty:** ${roll.diff}\n**Result:** ${result.result}\n**Dice:** ${dice.join(" ")}\n**Successes:** ${result.successes}`});
+        content += `\n**Result:** ${result.result}\n**Dice:** ${dice.join(" ")}\n**Successes:** ${result.successes}`;
+
+        interaction.reply({content});
     },
 });
