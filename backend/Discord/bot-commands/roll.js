@@ -32,6 +32,7 @@ export default({controller, DiceRoll})=> ({
 
 
         let {parts, diff, mods} = rollParser(interaction, helpText);
+        console.log(parts, diff, mods);
 
 
         if(Number.isNaN(parseInt(parts)))
@@ -42,6 +43,7 @@ export default({controller, DiceRoll})=> ({
             let poolParts = [];
             for(let part of poolArray)
             {
+                console.log(part);
                 poolParts.push(part.trim());
             }
 
@@ -55,7 +57,7 @@ export default({controller, DiceRoll})=> ({
             {
                 console.log(e);
                 console.log(e.message);
-                interaction.reply({content:e.message, flags: MessageFlags.Ephemeral});
+                await interaction.reply({content:e.message, flags: MessageFlags.Ephemeral});
                 return;
             }
         }
@@ -69,7 +71,7 @@ export default({controller, DiceRoll})=> ({
         let roll = new DiceRoll(pool);
         if(roll.dicePool >= 100)
         {
-            interaction.reply({content:'Your dice cup runneth over.', flags: MessageFlags.Ephemeral});
+            await interaction.reply({content:'Your dice cup runneth over.', flags: MessageFlags.Ephemeral});
             return;
         }
 
