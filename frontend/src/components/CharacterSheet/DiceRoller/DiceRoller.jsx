@@ -110,7 +110,7 @@ function DiceRoller({sheet, selectedTraits})
             <Row>
                 <Col md={2}><strong>Dice:</strong></Col>
                 <Col>{[...result.faces].sort((a, b)=> a - b).map((face, i)=> {
-                        let showFace = face === 10? face + "*" : face;
+                        let showFace = face === 10 && specialty? face + "*" : face;
                         return <span key={i}>{i > 0 && ', '}{face >= difficulty ? <em><b>{showFace}</b></em> : showFace}</span>
                     }
                 )}</Col>
