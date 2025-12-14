@@ -30,7 +30,7 @@ export default({controller, DiceRoll})=> ({
 
         let poolData = null;
 
-
+        console.log("Parsing roll");
         let {parts, diff, mods} = rollParser(interaction, helpText);
         console.log(parts, diff, mods);
 
@@ -43,7 +43,6 @@ export default({controller, DiceRoll})=> ({
             let poolParts = [];
             for(let part of poolArray)
             {
-                console.log(part);
                 poolParts.push(part.trim());
             }
 
