@@ -17,7 +17,14 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+
+// Normalize the configured frontend origin (browser Origin header doesn't include a trailing slash)
+const frontendOrigin = (conf.frontend && conf.frontend.url) ? conf.frontend.url.replace(/\/$/, '') : '*';
+console.log(`Enabling CORS for frontend: ${frontendOrigin}`)
+app.use(cors({
+    origin: frontendOrigin,
+    optionsSuccessStatus: 200
+}));
 
 import sheetRoutes from './routes/sheets.js';
 app.use('/sheets', sheetRoutes);
