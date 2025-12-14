@@ -35,6 +35,7 @@ export default function(interaction, helpText)
     }
 
     let [parts, diff] = args.split('vs');
+    console.log(parts, diff);
     parts = parts.trim();
     diff = parseInt(diff.trim());
     return {parts, diff, mods:{willpower, wyrd, specialty}};
