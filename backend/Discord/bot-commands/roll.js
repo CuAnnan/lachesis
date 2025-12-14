@@ -25,15 +25,8 @@ export default({controller, DiceRoll})=> ({
                 .setDescription('A space separated list of modifiers. "wi" or "willpower", "wy" or "wyrd", "spec" or "specialty"'))
     ,
     async execute(interaction) {
-
-        console.log("roll command");
-
         let poolData = null;
-
-        console.log("Parsing roll");
         let {parts, diff, mods} = rollParser(interaction, helpText);
-        console.log(parts, diff, mods);
-
 
         if(Number.isNaN(parseInt(parts)))
         {
