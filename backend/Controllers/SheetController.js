@@ -115,7 +115,7 @@ class SheetController extends Controller
 
     async getQRCode(req, res)
     {
-        const url = `${webPresence}/sheets/view/${req.params.nanoid}`;
+        const url = `${webPresence}/characters/${req.params.nanoid}/view`;
         const qrCode = await QRCode.toBuffer(url);
         res.setHeader('Content-Type', 'image/png');
         res.send(qrCode);
