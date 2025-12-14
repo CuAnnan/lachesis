@@ -33,10 +33,16 @@ export default function(interaction, helpText)
             specialty = true;
         }
     }
+    let parts = args;
+    let diff = 6;
 
-    let [parts, diff] = args.split('vs');
-    console.log(parts, diff);
+    if(args.indexOf('vs') >= 0)
+    {
+        [parts, diff] = args.split('vs');
+        diff = parseInt(diff.trim());
+    }
     parts = parts.trim();
-    diff = parseInt(diff.trim());
     return {parts, diff, mods:{willpower, wyrd, specialty}};
+
+
 }
