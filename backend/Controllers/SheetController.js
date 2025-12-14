@@ -3,6 +3,7 @@ import KithainSheet from "../../Character Model/KithainSheet.js";
 import QRCode from "qrcode";
 import blankSheetSchema from "../schema/blankSheetSchema.js";
 import conf from "../../conf.js";
+import {nanoid} from "nanoid";
 
 const webPresence = conf.frontend.url;
 
