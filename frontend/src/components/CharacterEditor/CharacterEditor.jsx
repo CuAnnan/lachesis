@@ -70,7 +70,8 @@ function CharacterEditor()
     useEffect(()=>{
         client.get(`/sheets/fetch/${nanoid || ''}`)
             .then(res=>{
-                let json = res.data;
+                let {sheet:json}=  res.data;
+
                 const data = blankSheet(json);
                 delete data.loading;
                 delete data.error;
