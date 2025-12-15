@@ -12,7 +12,6 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
 {
     const [qrCode, setQrCode] = useState(null);
     const [filledHealthIndex, setFilledHealthIndex] = useState(-1);
-    console.log(sheet);
 
     useEffect(()=>{
         if(!nanoid) return;

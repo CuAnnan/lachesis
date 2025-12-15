@@ -19,7 +19,37 @@ class SheetController extends Controller
         {
             throw new Error(`No sheet found for nanoid ${req.params.nanoid}`);
         }
-        res.status(200).json(sheetJSON.sheet);
+
+        const sheet = await KithainSheet.fromJSON(sheetJSON.sheet);
+        const result = {...await this.getSheetData(sheet), sheet:sheetJSON.sheet};
+        res.status(200).json(result);
+    }
+
+    async getSheetData(sheet)
+    {
+        let kith = null;
+        if(sheet.kith)
+        {
+            kith = await this.db.collection('kiths').findOne({name:sheet.kith});
+        }
+        let house = null;
+        if(sheet.house)
+        {
+            house = await this.db.collection('houses').findOne({name:sheet.house});
+        }
+
+        let arts = [];
+        for(let [name, knownArt] of Object.entries(sheet.structuredTraits.art))
+        {
+            let art = {name:knownArt.name, cantrips:[]};
+            let artData = await this.db.collection('arts').findOne({name:art.name});
+            for(let i = 0; i < knownArt.level; i++)
+            {
+                art.cantrips.push(artData.levels[i])
+            }
+            arts.push(art);
+        }
+        return {kith, house, arts};
     }
 
 
@@ -78,7 +108,9 @@ class SheetController extends Controller
             await loadedSheetsCollection.updateOne({hash}, {$set:{nanoid}}, {upsert:true});
             sheet = await KithainSheet.fromJSON(sheetDocument.sheet);
             this.objectCache.set(cacheHash, sheet);
-            return sheet;
+
+
+            return {sheet, kith, house, arts};
         }
         catch(err)
         {

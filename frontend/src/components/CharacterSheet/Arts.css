@@ -1,0 +1,17 @@
+.art
+{
+
+}
+
+.cantrip
+{
+    margin-bottom:0.5em;
+    border-bottom:1px solid gray;
+    padding-bottom:0.5em;
+}
+.cantrip:last-child
+{
+    margin-bottom:0;
+    padding-bottom:0;
+    border:none;
+}

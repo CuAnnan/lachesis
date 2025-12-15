@@ -10,6 +10,8 @@ import Row from 'react-bootstrap/Row';
 import Container from "react-bootstrap/Container";
 
 import CharacterSheetStructure from "./CharacterSheetStructure.jsx";
+import KithAndHouseBoons from "./KithAndHouseBoons.jsx";
+import Arts from "./Arts.jsx";
 
 import DiceRoller from "./DiceRoller/DiceRoller.jsx";
 
@@ -23,6 +25,9 @@ function CharacterSheetUI()
     const [sheet, setSheet] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
+    const [arts, setArts] = useState([]);
+    const [house, setHouse] = useState('');
+    const [kith, setKith] = useState('');
 
     const [selectedTraits, setSelectedTraits] = useState({});
 
@@ -45,7 +50,11 @@ function CharacterSheetUI()
 
         client.get(`/sheets/fetch/${nanoid || ''}`)
             .then(async res=> {
-                const loaded = await KithainSheet.fromJSON(res.data);
+                const {sheet, arts, kith, house} = res.data;
+                setArts(arts);
+                setHouse(house);
+                setKith(kith);
+                const loaded = await KithainSheet.fromJSON(sheet);
                 // Assign stable ids to every trait instance so duplicates can be selected independently
                 let counter = 1;
                 const st = loaded.structuredTraits || {};
@@ -62,6 +71,7 @@ function CharacterSheetUI()
                 setSelectedTraits({});
                 setSheet(loaded);
              }).catch(err=> {
+                 console.log(err);
                  if(!mounted) return;
                  setError(err?.message || 'Unknown error');
                  setSheet(null);
@@ -72,7 +82,9 @@ function CharacterSheetUI()
      },[nanoid]);
 
     if(loading) return <Container>Loading...</Container>;
-    if(error) return <Container>Error: {error}</Container>;
+    if(error){
+        return <Container>Error: {error}</Container>;
+    }
 
     return <Container fluid><Row>
         <Col>
@@ -91,8 +103,15 @@ function CharacterSheetUI()
                         toggleTrait={toggleTrait}
                     />
                 </Tab>
-                <Tab eventKey="kithAndHouseBonuses" title="Kith and House"></Tab>
-                <Tab eventKey="arts" title="Arts"></Tab>
+                <Tab eventKey="kithAndHouseBonuses" title="Kith and House">
+                    <KithAndHouseBoons
+                        kith={kith}
+                        house={house}
+                        />
+                </Tab>
+                <Tab eventKey="arts" title="Arts">
+                    <Arts arts={arts} />
+                </Tab>
             </Tabs>
         </Col>
         <Col>

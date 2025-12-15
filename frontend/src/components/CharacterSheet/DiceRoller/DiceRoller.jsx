@@ -49,7 +49,6 @@ function DiceRoller({sheet, selectedTraits})
     const [specialty, setSpecialty] = useState(false);
 
     const pool = sheet.getPool(traits);
-    console.log(pool);
 
     if(!pool.dicePool)
         return <></>;
