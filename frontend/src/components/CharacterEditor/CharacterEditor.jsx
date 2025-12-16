@@ -190,6 +190,13 @@ function CharacterEditor()
             <Row>
                 <Col lg={12} xl={2}>
                     <Instructions/>
+                    <Row className="purchasable d-flex justify-content-center align-items-center">
+                        <Col><strong>Total Summary:</strong></Col>
+                        <Col sm={2} className="text-center">{totalSummary.fp}</Col>
+                        <Col sm={2} className="text-center">{totalSummary.xp}</Col>
+                        <Col sm={1}>&nbsp;</Col>
+                        <Col sm={1}>&nbsp;</Col>
+                    </Row>
                 </Col>
                 <Col>
                     <h1 className="text-center">Personal Details</h1>
@@ -238,15 +245,6 @@ function CharacterEditor()
                             </Row>
                         </Col>
                         <Realms realms={state.realms} setRealm={updateRealm} />
-                    </Row>
-                </Col>
-                <Col lg={12} xl={2}>
-                    <Row className="purchasable d-flex justify-content-center align-items-center">
-                        <Col><strong>Total Summary:</strong></Col>
-                        <Col sm={2} className="text-center">{totalSummary.fp}</Col>
-                        <Col sm={2} className="text-center">{totalSummary.xp}</Col>
-                        <Col sm={1}>&nbsp;</Col>
-                        <Col sm={1}>&nbsp;</Col>
                     </Row>
                 </Col>
             </Row>
