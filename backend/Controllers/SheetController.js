@@ -108,9 +108,7 @@ class SheetController extends Controller
             await loadedSheetsCollection.updateOne({hash}, {$set:{nanoid}}, {upsert:true});
             sheet = await KithainSheet.fromJSON(sheetDocument.sheet);
             this.objectCache.set(cacheHash, sheet);
-
-
-            return {sheet, kith, house, arts};
+            return sheet;
         }
         catch(err)
         {
