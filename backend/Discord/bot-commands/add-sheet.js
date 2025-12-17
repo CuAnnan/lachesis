@@ -18,7 +18,7 @@ export default({controller})=>({
         const name = interaction.options.getString('name');
 
         controller.addSheet({hash, guildId:interaction.guildId, name}).then((result)=>{
-            interaction.reply({content:`Your character ${name} has been added. They can be found at ${conf.frontend.url}/character/${result}`, flags: MessageFlags.Ephemeral});
+            interaction.reply({content:`Your character ${name} has been added. They can be found at ${conf.frontend.url}/character/${result}/view`, flags: MessageFlags.Ephemeral});
         });
     },
 });

@@ -22,4 +22,8 @@ router.get('/:nanoid/qrCode', async(req, res, next)=>{
     controller.getQRCode(req, res).catch(next);
 });
 
+router.get('/:nanoid/share', async(req, res, next)=>{
+    controller.getSheetForTemporaryLink(req, res).catch(next);
+});
+
 export default router;

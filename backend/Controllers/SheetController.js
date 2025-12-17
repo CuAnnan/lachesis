@@ -25,6 +25,38 @@ class SheetController extends Controller
         res.status(200).json(result);
     }
 
+    async generateTemporaryViewLink(hash, sheetNano)
+    {
+        let temporaryLinkNano = nanoid();
+
+        const sheet = await this.getSheetByHashAndNanoid({hash, nanoid: sheetNano});
+        if(!sheet)
+        {
+            throw new Error("No sheet found for that user with that id");
+        }
+        const tempLinksCollection = this.db.collection('temporaryViewLinks');
+        await tempLinksCollection.insertOne({nanoid:temporaryLinkNano, sheetNanoid:sheetNano, hash, expiresAt:Date.now() + 15*60*1000});
+        return temporaryLinkNano;
+    }
+
+    async getSheetForTemporaryLink(req, res)
+    {
+        const tempLinksCollection = this.db.collection('temporaryViewLinks');
+        const tempLink = await tempLinksCollection.findOne({nanoid:req.params.nanoid});
+        if(!tempLink)
+        {
+            throw new Error("This temporary link is invalid or has expired");
+        }
+        if(tempLink.expiresAt < Date.now())
+        {
+            throw new Error("This temporary link has expired");
+        }
+
+        const sheet = await this.getSheetByHashAndNanoid({hash:tempLink.hash, nanoid:tempLink.sheetNanoid});
+        const result = {...await this.getSheetData(sheet), sheet:sheet};
+        res.status(200).json(result);
+    }
+
     async getSheetData(sheet)
     {
         let kith = null;
@@ -56,10 +88,18 @@ class SheetController extends Controller
 
     async getSheetsByHash(hash)
     {
-        let sheetsCursor = await this.collection.find({digest:hash});
-        if(!sheetsCursor)
+        const query = {digest:hash};
+        const count = await this.collection.countDocuments(query);
+        if(!count)
         {
             throw new Error(`No sheet found for user`);
+        }
+
+        let sheetsCursor = await this.collection.find(query);
+        if(!sheetsCursor)
+        {
+            console.log(hash);
+            throw new Error(`An error occured.`);
         }
         const sheets = [];
         for await(let sheet of sheetsCursor)
@@ -76,8 +116,11 @@ class SheetController extends Controller
         return sheetDocument.nanoid;
     }
 
+
+
     async getSheetByDigest(hash)
     {
+        console.log(hash);
         const loadedSheetsCollection = this.db.collection('loadedSheets');
         const nanoid = (await loadedSheetsCollection.findOne({hash})).nanoid;
         if(!nanoid)
