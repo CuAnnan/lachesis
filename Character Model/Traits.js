@@ -28,7 +28,7 @@ class Trait
 
     calculateLevel()
     {
-      let level= this.constructor.BASE  + this.cp + Math.floor(this.fp/this.constructor.FP_COST);
+      let level= this.constructor.BASE  + this.cp + Math.floor(Math.abs(this.fp)/this.constructor.FP_COST);
       let xpLeft = this.xp;
       let xpToLevel= level?this.constructor.XP_COST * level:this.constructor.FIRST_XP_COST;
       while(xpLeft >= xpToLevel)

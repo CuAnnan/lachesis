@@ -6,7 +6,6 @@ import {memo} from "react";
 function Trait({trait, isTraitSelected, toggleTrait})
 {
     const classNames = `traitName${ isTraitSelected?" selected" : ""}`;
-
     return <Row>
         <Col
             className={classNames}

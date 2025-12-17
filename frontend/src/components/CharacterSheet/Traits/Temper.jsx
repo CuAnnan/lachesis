@@ -5,7 +5,6 @@ import TraitBoxes from "@CharacterSheet/Traits/TraitBoxes.jsx";
 
 function Temper({temper})
 {
-    console.log(temper);
     return (temper && <>
         <Row><Col><h4>{temper.name}</h4></Col></Row>
         <Row><Col>
