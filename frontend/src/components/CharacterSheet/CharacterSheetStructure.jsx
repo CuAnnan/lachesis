@@ -1,6 +1,6 @@
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {memo, Fragment, useEffect, useState} from "react";
+import {memo, Fragment, useEffect, useState, useRef} from "react";
 import Temper from "./Traits/Temper.jsx";
 import UseGroup from "./Traits/UseGroup.jsx";
 import PersonalDetails from "./PersonalDetails.jsx";
@@ -12,6 +12,7 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
 {
     const [qrCode, setQrCode] = useState(null);
     const [filledHealthIndex, setFilledHealthIndex] = useState(-1);
+    const tempersRef = useRef(null);
 
     useEffect(()=>{
         if(!nanoid) return;
@@ -28,6 +29,63 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
             if(objectURL) URL.revokeObjectURL(objectURL);
         };
     }, [nanoid]);
+
+    useEffect(()=>{
+        // Print-time handler: if the tempers row would be split, force it to start on a new page
+        const el = tempersRef.current;
+        if(!el) return;
+
+        function handleBeforePrint(){
+            try{
+                const rect = el.getBoundingClientRect();
+                const pageHeight = window.innerHeight || document.documentElement.clientHeight;
+                // If the bottom of the tempers row would be below the printable viewport, force a break before it.
+                if(rect.bottom > pageHeight - 10) { // small safety margin
+                    el.classList.add('force-break-before');
+                } else {
+                    el.classList.remove('force-break-before');
+                }
+            } catch { void 0; }
+        }
+
+        function handleAfterPrint(){
+            el.classList.remove('force-break-before');
+        }
+
+        window.addEventListener('beforeprint', handleBeforePrint);
+        window.addEventListener('afterprint', handleAfterPrint);
+
+        // Some browsers support matchMedia('print') events instead
+        let mql = null;
+        if(window.matchMedia){
+            try{
+                mql = window.matchMedia('print');
+                if(typeof mql.addEventListener === 'function'){
+                    mql.addEventListener('change', (ev)=>{
+                        if(ev.matches) handleBeforePrint(); else handleAfterPrint();
+                    });
+                } else if(typeof mql.addListener === 'function'){
+                    mql.addListener((ev)=>{
+                        if(ev.matches) handleBeforePrint(); else handleAfterPrint();
+                    });
+                }
+            } catch { void 0; }
+        }
+
+        // Run once in case the current viewport is the print preview (some UIs show print preview without firing beforeprint)
+        // handleBeforePrint(); // don't run automatically to avoid altering UI during normal view
+
+        return ()=>{
+            window.removeEventListener('beforeprint', handleBeforePrint);
+            window.removeEventListener('afterprint', handleAfterPrint);
+            if(mql){
+                try{
+                    if(typeof mql.removeEventListener === 'function') mql.removeEventListener('change', handleBeforePrint);
+                    else if(typeof mql.removeListener === 'function') mql.removeListener(handleBeforePrint);
+                } catch { void 0; }
+            }
+        };
+    }, []);
 
     const healthLevels = {"Unbruised":sheet.kith==="Troll"?(sheet.secondOathSworn?5:3):1, "-1":2, "-2":2, "Crippled":1, "Incapacitated":1};
 
@@ -157,7 +215,7 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
                 />
             </Col>
         </Row>
-        <Row>
+        <Row className="tempersRow" ref={tempersRef}>
             <h2>Tempers</h2>
             <Col>
                 { qrCode && <img src={qrCode} alt="QR Code"/>}

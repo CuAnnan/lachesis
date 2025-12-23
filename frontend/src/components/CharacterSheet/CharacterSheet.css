@@ -16,9 +16,8 @@
 
 
 @media print {
-    body
-    {
-        font-size:80% !important;
+    html, body {
+        font-size: 95% !important;
     }
 
     header, footer, .no-print, .nav-tabs, .nav, .nav-pills
@@ -67,6 +66,31 @@
     img {
         max-width: 100% !important;
         height: auto !important;
+    }
+
+    /* Avoid splitting the tempers row across pages */
+    .tempersRow, .tempersRow * {
+        -webkit-column-break-inside: avoid !important; /* Safari/Chrome */
+        -moz-column-break-inside: avoid !important; /* Firefox */
+        column-break-inside: avoid !important;
+
+        /* Newer spec */
+        break-inside: avoid !important;
+
+        /* Legacy page-break fallback */
+        page-break-inside: avoid !important;
+    }
+
+    /* Ensure child columns are kept together as a unit */
+    .tempersRow > .col {
+        display: inline-block; /* Prevents some browsers from inserting breaks between flex children */
+        vertical-align: top;
+        float: none !important; /* clear floats when ensuring inline-block keep-together */
+    }
+
+    .force-break-before {
+        break-before: page !important;
+        page-break-before: always !important; /* legacy */
     }
 }
 
