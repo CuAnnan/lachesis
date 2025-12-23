@@ -291,6 +291,10 @@ export const reducer = (state, action) =>
 
             return newState;
         }
+        case "updateLegacy":
+            return { ...state, legacies:{...state.legacies, [action.court]:action.legacy} };
+        case "updateSecondOathSworn":
+            return { ...state, secondOathSworn: action.value };
         default:
             console.warn(`Unhandled action type ${action.type}`);
             return state;
