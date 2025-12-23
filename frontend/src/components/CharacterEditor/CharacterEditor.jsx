@@ -32,6 +32,8 @@ function getStructuredSummary(state) {
         Merits: state.merits ?? [],
         Flaws: state.flaws ?? [],
         Tempers: state.tempers ? Object.values(state.tempers):[],
+        Arts: state.arts ?? [],
+        Realms: state.realms ?? [],
     }
 }
 
