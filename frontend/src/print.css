@@ -1,6 +1,6 @@
 @media print {
     #characterSheet {
-        font-size: 85% !important;
+        font-size: 80% !important;
     }
 
     header, footer, .no-print, .nav-tabs, .nav, .nav-pills

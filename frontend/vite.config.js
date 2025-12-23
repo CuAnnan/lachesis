@@ -18,4 +18,14 @@ export default defineConfig({
             '@root': path.resolve(__dirname, '..'),
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('bootstrap')) return 'vendor-bootstrap';
+                    if (id.endsWith('print.css')) return 'print';
+                },
+            },
+        },
+    },
 })
