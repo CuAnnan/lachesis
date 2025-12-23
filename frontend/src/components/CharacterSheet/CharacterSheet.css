@@ -16,7 +16,7 @@
 
 
 @media print {
-    html, body {
+    body {
         font-size: 90% !important;
     }
 
