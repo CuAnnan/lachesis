@@ -1,4 +1,4 @@
-import {useReducer, useEffect, useState, useMemo} from 'react';
+import {useReducer, useEffect, useMemo} from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -9,14 +9,19 @@ import Realms from './Spendable/Realms/Realms.jsx';
 import { useParams } from "react-router-dom";
 import {client} from "@inc/AxiosInterceptor.js";
 import Instructions from './Instructions.jsx';
+import Summary from './Summary.jsx';
 import Tempers from './Spendable/Temper/Tempers.jsx';
 
 import './Character.css';
 import CharacterDetails from "./CharacterDetails/CharacterDetails.jsx";
 import {CharacterDispatchers} from "./CharacterDispatchers.js";
 
+
+
 import {reducer, attributeMap, flattenSheet, blankSheet} from "./CharacterReducer.js";
 import BMFSection from "./Spendable/BMFModal/BMFSection.jsx";
+import useAutosave from "./useAutosave.js";
+import { parseServerSheet } from "./sheetUtils.js";
 
 
 function getTotalSummary(state) {
@@ -45,7 +50,6 @@ function CharacterEditor()
     const {nanoid} = useParams();
     const initialState = blankSheet();
     const [state, dispatch] = useReducer(reducer, initialState);
-    const [saveRequest, setSaveRequest] = useState(null);
     const {
         updateArt,
         updateRealm,
@@ -68,73 +72,12 @@ function CharacterEditor()
         updateTemper,
     } = CharacterDispatchers(dispatch);
 
+    // Fetch and parse server sheet using helper
     useEffect(()=>{
         client.get(`/sheets/fetch/${nanoid || ''}`)
             .then(res=>{
-                let {sheet:json}=  res.data;
-
-                const data = blankSheet(json);
-                delete data.loading;
-                delete data.error;
-                const arts = [];
-
-                for(let trait of json.traits)
-                {
-                    const ttype = (trait.type || '').toLowerCase();
-                    switch(ttype)
-                    {
-                        case 'attribute':
-                            data.attributes[attributeMap[trait.name]].push(trait);
-                            break;
-                        case 'talent': case 'skill': case 'knowledge':
-                            // trait.type may be 'talent' | 'skill' | 'knowledge'
-                            data.abilities[trait.type.charAt(0).toUpperCase() + trait.type.slice(1)].push(trait);
-                            break;
-                        case 'realm':
-                            data.realms.push(trait);
-                            break;
-                        case 'art':
-                            arts.push(trait);
-                            break;
-                        case 'background':
-                            trait.id = getNextBackgroundId();
-                            data.backgrounds.push(trait);
-                            break;
-                        case 'merit':
-                            trait.id = getNextMeritId();
-                            data.merits.push(trait);
-                            break;
-                        case 'flaw':
-                            trait.id = getNextFlawId();
-                            data.flaws.push(trait);
-                            break;
-                        case 'temper': case 'glamour': case 'willpower':
-                            // preserve as-is; temper types might be capitalized in some sheets
-                            data.tempers[trait.type] = trait;
-                            break;
-                        default:
-                            // unknown trait type — ignore
-                            break;
-                    }
-                }
-                // Merge incoming arts with default arts, overwriting only when core fields differ
-                if (arts.length) {
-                    const coreKeys = ['cp','fp','xp','level','xpToLevel'];
-                    const mergedArts = data.arts.map(defaultArt => {
-                        const incoming = arts.find(a => a.name === defaultArt.name);
-                        if (!incoming) return defaultArt;
-                        const differs = coreKeys.some(k => Number(defaultArt[k] ?? 0) !== Number(incoming[k] ?? 0));
-                        return differs ? {...incoming} : defaultArt;
-                    });
-                    data.arts = mergedArts;
-                }
-
-                if(json.tempers)
-                {
-                    data.tempers = {...json.tempers}
-                }
-
-
+                const {sheet: json} = res.data;
+                const data = parseServerSheet(json, { getNextBackgroundId, getNextMeritId, getNextFlawId, attributeMap });
                 dispatch({'type':'loadData', payload:data});
             }).catch(error=>{
                 console.error(error);
@@ -142,20 +85,14 @@ function CharacterEditor()
 
     },[nanoid, getNextFlawId, getNextBackgroundId, getNextMeritId]);
 
-    useEffect(() => {
-        if (state.loading || saveRequest || !state.hasChanges) return;
-        console.log(state);
-        const request = client
-            .post('/sheets', { sheet:  flattenSheet(state), nanoid })
-            .then(resp => {
-                console.log('Saved:', resp.data);
-                dispatch({ type: 'resetDirty' });
-            })
-            .catch(err => console.error('Save error:', err))
-            .finally(() => setSaveRequest(null));
-
-        setSaveRequest(request);
-    }, [state, saveRequest, nanoid]);
+    // Use autosave hook to keep autosave logic out of the component
+    useAutosave({
+        // pass a minimal shape the hook expects: the reducer keeps the canonical shape
+        ...state,
+        sheet: flattenSheet(state),
+        loading: state.loading,
+        hasChanges: state.hasChanges,
+      }, nanoid, dispatch, { debounceMs: 800 });
 
     const attributeCols =useMemo(
         () =>
@@ -191,13 +128,8 @@ function CharacterEditor()
             <Row>
                 <Col lg={12} xl={2}>
                     <Instructions/>
-                    <Row className="purchasable d-flex justify-content-center align-items-center">
-                        <Col><strong>Total Summary:</strong></Col>
-                        <Col sm={2} className="text-center">{totalSummary.fp}</Col>
-                        <Col sm={2} className="text-center">{totalSummary.xp}</Col>
-                        <Col sm={1}>&nbsp;</Col>
-                        <Col sm={1}>&nbsp;</Col>
-                    </Row>
+                    <Summary totalSummary={totalSummary}/>
+
                 </Col>
                 <Col>
                     <h1 className="text-center">Personal Details</h1>
