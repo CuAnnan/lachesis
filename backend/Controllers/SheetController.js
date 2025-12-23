@@ -88,13 +88,11 @@ class SheetController extends Controller
         }
 
         let arts = [];
-        for(let [name, knownArt] of Object.entries(sheet.structuredTraits.art))
-        {
-            let art = {name:knownArt.name, cantrips:[]};
-            let artData = await this.db.collection('arts').findOne({name:art.name});
-            for(let i = 0; i < knownArt.level; i++)
-            {
-                art.cantrips.push(artData.levels[i])
+        for (const knownArt of Object.values(sheet.structuredTraits.art)) {
+            let art = { name: knownArt.name, cantrips: [] };
+            let artData = await this.db.collection('arts').findOne({ name: art.name });
+            for (let i = 0; i < knownArt.level; i++) {
+                art.cantrips.push(artData.levels[i]);
             }
             arts.push(art);
         }
@@ -186,7 +184,14 @@ class SheetController extends Controller
 
     async saveSheet(req, res)
     {
-        await this.collection.findOneAndUpdate({nanoid:req.body.nanoid}, {$set:{sheet:req.body.sheet}});
+        // Accept nanoid either in the request body (old behavior) or query params (what the frontend currently sends)
+        const nano = req.body?.nanoid ?? req.query?.nanoid;
+        if (!nano) {
+            res.status(400).json({ status: 'error', message: 'Missing nanoid' });
+            return;
+        }
+
+        await this.collection.findOneAndUpdate({nanoid: nano}, {$set:{sheet:req.body.sheet}});
 
         res.status(200).json({status: 'success'});
     }
