@@ -9,7 +9,6 @@ function Arts({arts}) {
         {arts.map((art, index)=> {
             if(art.cantrips.length > 0)
             {
-                console.log(art);
                 return <div className="art" key={index}>
                     <Row><Col><h3>{art.name}</h3></Col></Row>
                     {art.cantrips.map((cantrip, index)=>{
