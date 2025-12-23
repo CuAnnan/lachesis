@@ -18,7 +18,7 @@
 @media print {
     body
     {
-        font-size:0.8em !important;
+        font-size:80% !important;
     }
 
     header, footer, .no-print, .nav-tabs, .nav, .nav-pills
@@ -125,12 +125,12 @@ h2::after {
     padding-top:2em;
 }
 
-#personalDetails div:nth-child(even)
+#personalDetails > div
 {
     border-right:1px solid black;
 }
 
-#personalDetails div:nth-child(6n)
+#personalDetails > div:nth-child(3n)
 {
     border:none;
 }
