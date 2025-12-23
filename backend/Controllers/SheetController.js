@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import blankSheetSchema from "../schema/blankSheetSchema.js";
 import conf from "../../conf.js";
 import {nanoid} from "nanoid";
+import DiceRoll from "../../Character Model/DiceRoll.js";
 
 const webPresence = conf.frontend.url;
 
@@ -23,6 +24,22 @@ class SheetController extends Controller
         const sheet = await KithainSheet.fromJSON(sheetJSON.sheet);
         const result = {...await this.getSheetData(sheet), sheet:sheetJSON.sheet};
         res.status(200).json(result);
+    }
+
+    async roll(req, res)
+    {
+        let sheet = this.objectCache.get(req.params.nanoid);
+        if(!sheet)
+        {
+            const document = await this.collection.findOne({nanoid:req.params.nanoid});
+            sheet = await KithainSheet.fromJSON(document.sheet);
+            this.objectCache.set(req.params.nanoid, sheet);
+        }
+        const {traits, diff, specialty, wyrd, willpower} = req.body
+        const dicePool = sheet.getPool(traits);
+
+        const roll = new DiceRoll({traits, dicePool, diff, specialty, wyrd, willpower});
+        res.status(200).json(roll.resolve());
     }
 
     async generateTemporaryViewLink(hash, sheetNano)
@@ -120,21 +137,18 @@ class SheetController extends Controller
 
     async getSheetByDigest(hash)
     {
-        console.log(hash);
         const loadedSheetsCollection = this.db.collection('loadedSheets');
-        const nanoid = (await loadedSheetsCollection.findOne({hash})).nanoid;
-        if(!nanoid)
+        const sheet = await loadedSheetsCollection.findOne({hash});
+        if(!sheet)
         {
             throw new Error("There is no sheet loaded for your account on this Server");
         }
-        return await this.getSheetByHashAndNanoid({hash, nanoid});
+        return await this.getSheetByHashAndNanoid({hash, nanoid:sheet.nanoid});
     }
 
     async getSheetByHashAndNanoid({hash, nanoid})
     {
-        const cacheHash = hash+":"+nanoid;
-
-        let sheet = this.objectCache.get(cacheHash);
+        let sheet = this.objectCache.get(nanoid);
         if(sheet)
         {
             return sheet;
@@ -150,7 +164,7 @@ class SheetController extends Controller
         try {
             await loadedSheetsCollection.updateOne({hash}, {$set:{nanoid}}, {upsert:true});
             sheet = await KithainSheet.fromJSON(sheetDocument.sheet);
-            this.objectCache.set(cacheHash, sheet);
+            this.objectCache.set(nanoid, sheet);
             return sheet;
         }
         catch(err)

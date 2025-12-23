@@ -28,6 +28,7 @@ function getTotalSummary(state) {
         ...(state.backgrounds ?? []),
         ...(state.merits ?? []),
         ...(state.flaws ?? []),
+        ...(state.tempers ? Object.values(state.tempers):[]),
     ];
     return allSpendables.reduce(
         (totals, item) => ({

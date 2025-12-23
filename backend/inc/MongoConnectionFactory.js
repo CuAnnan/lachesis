@@ -12,7 +12,10 @@ class MongoConnectionFactory
             console.log("Running initial connection");
             let mongoUrl = `mongodb://${conf.mongo.user}:${encodeURIComponent(conf.mongo.password)}@${conf.mongo.host}/${conf.mongo.db}?directConnection=true`;
             MongoConnectionFactory.MongoClient = new MongoClient(mongoUrl);
+            console.log(mongoUrl);
+            console.log("Client created");
             await MongoConnectionFactory.MongoClient.connect();
+            console.log("Connected to mongo");
             MongoConnectionFactory.Instance = MongoConnectionFactory.MongoClient.db(conf.db);
             this.#instantiated = true;
         }
