@@ -1,14 +1,12 @@
 import React from 'react';
-import { Navbar, Nav, NavItem, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import { Outlet, Link } from 'react-router-dom';
-
-import {client} from "@inc/AxiosInterceptor.js";
 
 function Layout()
 {
     return (<div className="container-fluid">
         <header>
-            <Navbar expand="lg" className="bg-body-tertiary">
+            <Navbar expand="lg" className="bg-body-tertiary no-print">
                 <Container>
                     <Navbar.Brand>Lachesis</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />

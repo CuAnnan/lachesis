@@ -59,7 +59,7 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
         <Row>
             <h2>Attributes</h2>
         </Row>
-        <Row>
+        <Row className="traitGroup">
             <UseGroup
                 key="physical"
                 useGroupName="Physical"
@@ -85,16 +85,25 @@ function CharacterSheetStructure({sheet, nanoid, isTraitSelected, toggleTrait})
         <Row>
             <h2>Abilities</h2>
         </Row>
-        <Row>
-            {Object.entries(sheet.abilities).map(([useGroupName, useGroup]) => (
-                <UseGroup
-                    key={useGroupName}
-                    useGroupName={useGroupName}
-                    useGroup={useGroup}
-                    isTraitSelected = {isTraitSelected}
-                    toggleTrait = {toggleTrait}
-                />
-            ))}
+        <Row className="traitGroup">
+            <UseGroup
+                key="talents"
+                useGroupName="Talents"
+                useGroup={sheet.abilities.talents}
+                isTraitSelected = {isTraitSelected}
+                toggleTrait = {toggleTrait}/>
+            <UseGroup
+                key="skills"
+                useGroupName="Skills"
+                useGroup={sheet.abilities.skills}
+                isTraitSelected = {isTraitSelected}
+                toggleTrait = {toggleTrait}/>
+            <UseGroup
+                key="knowledges"
+                useGroupName="Knowledges"
+                useGroup={sheet.abilities.knowledges}
+                isTraitSelected = {isTraitSelected}
+                toggleTrait = {toggleTrait}/>
         </Row>
         <Row>
             <h2>Advantages</h2>

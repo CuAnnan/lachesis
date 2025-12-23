@@ -16,13 +16,24 @@
 
 
 @media print {
-    body {
-        font-size: 0.9em;
+    body
+    {
+        font-size:0.8em !important;
     }
 
-    header, footer, .no-print
+    header, footer, .no-print, .nav-tabs, .nav, .nav-pills
     {
-        display: none;
+        display: none !important;
+    }
+
+    #uncontrolled-tab-example
+    {
+        display: none !important;
+    }
+
+    ul[role="tablist"]
+    {
+        display: none !important;
     }
 
     .tab-content > .tab-pane {
@@ -30,6 +41,32 @@
         opacity: 1 !important;
         visibility: visible !important;
         page-break-after: always;
+    }
+
+    .container, .container-fluid {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+
+    .traitGroup > .useGroup, .row > .col {
+        float: left !important;
+        box-sizing: border-box;
+    }
+
+    .traitGroup > .useGroup, .row > .col
+    {
+        width: 33.3333% !important;
+    }
+
+    h2::before, h2::after, h3::before, h3::after {
+        display: block !important;
+        opacity: 0.25 !important;
+    }
+
+    img {
+        max-width: 100% !important;
+        height: auto !important;
     }
 }
 
@@ -97,4 +134,3 @@ h2::after {
 {
     border:none;
 }
-
