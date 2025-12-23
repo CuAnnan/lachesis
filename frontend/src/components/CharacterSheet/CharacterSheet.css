@@ -17,6 +17,7 @@
 
 @media print {
     html, body {
+        color: blue !important;
         font-size: 95% !important;
     }
 
