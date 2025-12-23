@@ -16,7 +16,7 @@
 
 
 @media print {
-    body {
+    #characterSheet {
         font-size: 85% !important;
     }
 

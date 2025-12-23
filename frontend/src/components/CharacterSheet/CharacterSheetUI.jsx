@@ -86,7 +86,7 @@ function CharacterSheetUI()
         return <Container>Error: {error}</Container>;
     }
 
-    return <Container fluid><Row>
+    return <Container fluid id="characterSheet"><Row>
         <Col>
             <DiceRoller
                 sheet={sheet}
