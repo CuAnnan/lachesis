@@ -184,14 +184,7 @@ class SheetController extends Controller
 
     async saveSheet(req, res)
     {
-        // Accept nanoid either in the request body (old behavior) or query params (what the frontend currently sends)
-        const nano = req.body?.nanoid ?? req.query?.nanoid;
-        if (!nano) {
-            res.status(400).json({ status: 'error', message: 'Missing nanoid' });
-            return;
-        }
-
-        await this.collection.findOneAndUpdate({nanoid: nano}, {$set:{sheet:req.body.sheet}});
+        await this.collection.findOneAndUpdate({nanoid:req.body.nanoid}, {$set:{sheet:req.body.sheet}});
 
         res.status(200).json({status: 'success'});
     }
