@@ -240,6 +240,7 @@ export const reducer = (state, action) =>
         case "updateCharacterDetail":
             return {
                 ...state,
+                hasChanges: true,
                 [action.field]:action.value
             }
         case "updateHouseBonuses":
@@ -250,7 +251,7 @@ export const reducer = (state, action) =>
             const oldBonuses = houseBonuses[oldHouse] ?? [];
             const newBonuses = houseBonuses[newHouse] ?? [];
 
-            let newState = { ...state, house: newHouse };
+            let newState = { ...state, house: newHouse, hasChanges:true };
 
             // Remove old bonuses
             if (oldBonuses.length) {
@@ -279,7 +280,7 @@ export const reducer = (state, action) =>
                 if (newKith === 'Troll') newBonus.bonus += 2;
             }
 
-            let newState = { ...state, kith: newKith };
+            let newState = { ...state, kith: newKith, hasChanges:true };
 
             if (oldBonus) {
                 newState.attributes = applyAttributeBonus(newState.attributes, oldBonus.name, -oldBonus.bonus);
@@ -292,9 +293,17 @@ export const reducer = (state, action) =>
             return newState;
         }
         case "updateLegacy":
-            return { ...state, legacies:{...state.legacies, [action.court]:action.legacy} };
+            return {
+                ...state,
+                hasChanges: true,
+                legacies:{...state.legacies, [action.court]:action.legacy}
+            };
         case "updateSecondOathSworn":
-            return { ...state, secondOathSworn: action.value };
+            return {
+                ...state,
+                hasChanges: true,
+                secondOathSworn: action.value
+            };
         default:
             console.warn(`Unhandled action type ${action.type}`);
             return state;
