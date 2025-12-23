@@ -24,24 +24,15 @@ import useAutosave from "./useAutosave.js";
 import { parseServerSheet } from "./sheetUtils.js";
 
 
-function getTotalSummary(state) {
-    const allSpendables = [
-        ...Object.values(state.attributes ?? {}).flatMap(g => g),
-        ...Object.values(state.abilities ?? {}).flatMap(g => g),
-        ...(state.arts ?? []),
-        ...(state.realms ?? []),
-        ...(state.backgrounds ?? []),
-        ...(state.merits ?? []),
-        ...(state.flaws ?? []),
-        ...(state.tempers ? Object.values(state.tempers):[]),
-    ];
-    return allSpendables.reduce(
-        (totals, item) => ({
-            fp: totals.fp + (item.fp || 0),
-            xp: totals.xp + (item.xp || 0),
-        }),
-        { cp: 0, fp: 0, xp: 0 }
-    );
+function getStructuredSummary(state) {
+    return {
+        Attributes: Object.values(state.attributes ?? {}).flatMap(g => g),
+        Abilities: Object.values(state.abilities ?? {}).flatMap(g => g),
+        Backgrounds: state.backgrounds ?? [],
+        Merits: state.merits ?? [],
+        Flaws: state.flaws ?? [],
+        Tempers: state.tempers ? Object.values(state.tempers):[],
+    }
 }
 
 
@@ -120,16 +111,15 @@ function CharacterEditor()
         [state.abilities, setAbility]
     );
 
-    const totalSummary = getTotalSummary(state);
+
 
     return (
         state && (
         <Container fluid>
             <Row>
                 <Col lg={12} xl={2}>
+                    <Summary summary={getStructuredSummary(state)}/>
                     <Instructions/>
-                    <Summary totalSummary={totalSummary}/>
-
                 </Col>
                 <Col>
                     <h1 className="text-center">Personal Details</h1>
