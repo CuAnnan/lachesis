@@ -120,11 +120,21 @@ function CharacterDetails({state, updateCharacterDetail, updateLegacy})
                 value={state.kith}
                 values={kiths}
             />
+            {state.kith === "Troll" && (
+                <SimpleSelect
+                    label="Second Oath Sworn"
+                    onChange={(e)=>{updateCharacterDetail("secondOathSworn", e.target.value === "true")}}
+                    value={state.secondOathSworn ? "true" : "false"}
+                    values={["false", "true"]}
+                />
+            )}
             <SimpleInput
                 onChange={(e)=>{updateCharacterDetail("motley", e.target.value)}}
                 value={state.motley}
                 label="Motley"
             />
+            
+            
         </Col>
     </Row>;
 }
