@@ -269,15 +269,13 @@ export const reducer = (state, action) =>
             const oldKith = state.kith;
             const newKith = action.value;
 
-            let oldBonus = oldKith ? { ...kithBonuses[oldKith] } : null;
-            let newBonus = newKith ? { ...kithBonuses[newKith] } : null;
-
-            if (!oldBonus && !newBonus) return state;
+            let oldBonus = oldKith && kithBonuses[oldKith] ? { ...kithBonuses[oldKith] } : null;
+            let newBonus = newKith && kithBonuses[newKith] ? { ...kithBonuses[newKith] } : null;
 
             // Troll gets +2 if second Oath is sworn
             if (state.secondOathSworn) {
-                if (oldKith === 'Troll') oldBonus.bonus += 2;
-                if (newKith === 'Troll') newBonus.bonus += 2;
+                if (oldKith === 'Troll' && oldBonus) oldBonus.bonus += 2;
+                if (newKith === 'Troll' && newBonus) newBonus.bonus += 2;
             }
 
             let newState = { ...state, kith: newKith, hasChanges:true };
