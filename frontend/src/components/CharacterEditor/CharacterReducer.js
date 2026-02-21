@@ -43,6 +43,9 @@ const houseBonuses = {
 
 export const applyAttributeBonus = (attributes, name, bonus) => {
     const group = attributeMap[name];
+    if (!group || !attributes || !Array.isArray(attributes[group])) {
+        return attributes;
+    }
     return {
         ...attributes,
         [group]: attributes[group].map(attr =>
@@ -54,6 +57,9 @@ export const applyAttributeBonus = (attributes, name, bonus) => {
 };
 
 const applyAbilityBonus = (abilities, type, name, bonus) => {
+    if (!abilities || !Array.isArray(abilities[type])) {
+        return abilities;
+    }
     return {
         ...abilities,
         [type]: abilities[type].map(skill =>
