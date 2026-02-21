@@ -22,7 +22,7 @@ export default function useAutosave(state, nanoid, dispatch, options = {}) {
       saveControllerRef.current = controller;
 
       client
-        .post('/sheets', { sheet: state.__flattened ? state.__flattened : state.sheet || state }, { signal: controller.signal, params: { nanoid } })
+        .post('/sheets', { nanoid, sheet: state.__flattened ? state.__flattened : state.sheet || state }, { signal: controller.signal })
         .then(() => {
           dispatch({ type: 'resetDirty' });
         })
