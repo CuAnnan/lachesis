@@ -42,6 +42,7 @@ const houseBonuses = {
 }
 
 export const applyAttributeBonus = (attributes, name, bonus) => {
+    console.log("Here?");
     const group = attributeMap[name];
     if (!group) {
         console.error(`applyAttributeBonus: unknown attribute name "${name}", attributeMap keys: ${Object.keys(attributeMap).join(', ')}`);
