@@ -184,14 +184,23 @@ class SheetController extends Controller
 
     async saveSheet(req, res)
     {
-        const nanoid = req.body?.nanoid ?? req.query?.nanoid;
+        const nanoid = (req.body?.nanoid ?? req.query?.nanoid ?? req.params?.nanoid ?? '').toString().trim();
         if(!nanoid)
         {
             throw new Error('Missing nanoid for save operation');
         }
-        await this.collection.findOneAndUpdate({nanoid}, {$set:{sheet:req.body.sheet}});
+        const result = await this.collection.findOneAndUpdate(
+            {nanoid},
+            {$set:{sheet:req.body.sheet}},
+            {returnDocument:'after'}
+        );
+        if(!result.value)
+        {
+            res.status(404).json({error:'Sheet not found', nanoid});
+            return;
+        }
 
-        res.status(200).json({status: 'success'});
+        res.status(200).json({status: 'saved', nanoid});
     }
 
     static getInstance()
