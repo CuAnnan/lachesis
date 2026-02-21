@@ -10,14 +10,26 @@ export function parseServerSheet(json, dispatchHelpers) {
   for (let trait of json.traits) {
     const ttype = (trait.type || '').toLowerCase();
     switch (ttype) {
-      case 'attribute':
-        data.attributes[dispatchHelpers.attributeMap[trait.name]].push(trait);
+      case 'attribute': {
+        const group = dispatchHelpers.attributeMap[trait.name];
+        if (group && data.attributes[group]) {
+          data.attributes[group].push(trait);
+        } else {
+          console.warn(`Unknown attribute: ${trait.name}`);
+        }
         break;
+      }
       case 'talent':
       case 'skill':
-      case 'knowledge':
-        data.abilities[trait.type.charAt(0).toUpperCase() + trait.type.slice(1)].push(trait);
+      case 'knowledge': {
+        const abilityType = trait.type.charAt(0).toUpperCase() + trait.type.slice(1);
+        if (data.abilities[abilityType]) {
+          data.abilities[abilityType].push(trait);
+        } else {
+          console.warn(`Unknown ability type: ${abilityType}`);
+        }
         break;
+      }
       case 'realm':
         data.realms.push(trait);
         break;

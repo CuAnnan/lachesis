@@ -43,7 +43,16 @@ const houseBonuses = {
 
 export const applyAttributeBonus = (attributes, name, bonus) => {
     const group = attributeMap[name];
-    if (!group || !attributes || !Array.isArray(attributes[group])) {
+    if (!group) {
+        console.error(`applyAttributeBonus: unknown attribute name "${name}", attributeMap keys: ${Object.keys(attributeMap).join(', ')}`);
+        return attributes;
+    }
+    if (!attributes) {
+        console.error(`applyAttributeBonus: attributes is ${attributes}, name=${name}`);
+        return attributes;
+    }
+    if (!Array.isArray(attributes[group])) {
+        console.error(`applyAttributeBonus: attributes["${group}"] is not an array`, attributes[group]);
         return attributes;
     }
     return {
