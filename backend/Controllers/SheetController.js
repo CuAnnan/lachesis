@@ -189,18 +189,36 @@ class SheetController extends Controller
         {
             throw new Error('Missing nanoid for save operation');
         }
-        const result = await this.collection.findOneAndUpdate(
-            {nanoid},
+
+        let targetNanoid = nanoid;
+        let result = await this.collection.findOneAndUpdate(
+            {nanoid:targetNanoid},
             {$set:{sheet:req.body.sheet}},
             {returnDocument:'after'}
         );
+
+        if(!result.value)
+        {
+            const tempLinksCollection = this.db.collection('temporaryViewLinks');
+            const tempLink = await tempLinksCollection.findOne({nanoid});
+            if(tempLink && tempLink.expiresAt > Date.now())
+            {
+                targetNanoid = tempLink.sheetNanoid;
+                result = await this.collection.findOneAndUpdate(
+                    {nanoid:targetNanoid},
+                    {$set:{sheet:req.body.sheet}},
+                    {returnDocument:'after'}
+                );
+            }
+        }
+
         if(!result.value)
         {
             res.status(404).json({error:'Sheet not found', nanoid});
             return;
         }
 
-        res.status(200).json({status: 'saved', nanoid});
+        res.status(200).json({status: 'saved', nanoid:targetNanoid});
     }
 
     static getInstance()
