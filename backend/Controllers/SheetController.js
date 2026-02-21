@@ -212,7 +212,7 @@ class SheetController extends Controller
             }
         }
 
-        if(!result.value)
+        if(!result)
         {
             res.status(404).json({error:'Sheet not found', nanoid});
             return;
