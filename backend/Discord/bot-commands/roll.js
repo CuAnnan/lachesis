@@ -64,6 +64,6 @@ export default ({ controller, DiceRoll }) => ({
         if (result.specialty) content += `\n**Specialty roll**`;
         content += `\n**Result:** ${result.result}\n**Dice:** ${dice.join(" ")}\n**Successes:** ${result.successes}`;
 
-        await interaction.reply({ content, ephemeral: true });
+        await interaction.reply({ content});
     },
 });
