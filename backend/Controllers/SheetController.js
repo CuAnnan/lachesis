@@ -26,6 +26,7 @@ class SheetController extends Controller
         res.status(200).json(result);
     }
 
+
     async roll(req, res)
     {
         let sheet = this.objectCache.get(req.params.nanoid);
@@ -55,6 +56,7 @@ class SheetController extends Controller
         await tempLinksCollection.insertOne({nanoid:temporaryLinkNano, sheetNanoid:sheetNano, hash, expiresAt:Date.now() + 15*60*1000});
         return temporaryLinkNano;
     }
+
 
     async getSheetForTemporaryLink(req, res)
     {
@@ -91,8 +93,19 @@ class SheetController extends Controller
         for (const knownArt of Object.values(sheet.structuredTraits.art)) {
             let art = { name: knownArt.name, cantrips: [] };
             let artData = await this.db.collection('arts').findOne({ name: art.name });
-            for (let i = 0; i < knownArt.level; i++) {
-                art.cantrips.push(artData.levels[i]);
+            if(!artData)
+            {
+                const escapedName = art.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                artData = await this.db.collection('arts').findOne({name:{$regex:new RegExp(`^${escapedName}$`, 'i')}});
+            }
+            if(!artData)
+            {
+                const levels = Array.isArray(artData?.levels) ? artData.levels : [];
+                for (let i = 0; i < knownArt.level; i++) {
+                    if (levels[i]) {
+                        art.cantrips.push(levels[i]);
+                    }
+                }
             }
             arts.push(art);
         }
@@ -125,6 +138,13 @@ class SheetController extends Controller
     }
 
     async addSheet({hash, guildId, name})
+    {
+        const sheetDocument = {digest:hash, guildId, nanoid:nanoid(), sheet:{...blankSheetSchema, name}};
+        await this.collection.insertOne(sheetDocument);
+        return sheetDocument.nanoid;
+    }
+
+    async addSheetFromGoogle({hash, guildId, sheet})
     {
         const sheetDocument = {digest:hash, guildId, nanoid:nanoid(), sheet:{...blankSheetSchema, name}};
         await this.collection.insertOne(sheetDocument);
