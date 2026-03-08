@@ -20,19 +20,26 @@ export default ({ controller }) => ({
         const url = interaction.options.getString('url');
 
         try {
+            await interaction.deferReply({ ephemeral: true });
+
             const sheet = await GoogleKithainSheet.fromGoogleSheetsURL(url);
             const result = await controller.addSheetFromGoogle({ hash, guildId: interaction.guildId, sheet });
 
-            await interaction.reply({
-                content: `Your character ${sheet.name} has been added. They can be found at ${conf.frontend.url}/character/${result}/view`,
-                ephemeral: true
+            await interaction.editReply({
+                content: `Your character ${sheet.name} has been added. They can be found at ${conf.frontend.url}/character/${result}/view`
             });
         } catch (err) {
             console.error(err);
-            await interaction.reply({
-                content: "Failed to fetch or add the sheet. Make sure the URL is correct and published to the web.",
-                ephemeral: true
-            });
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply({
+                    content: 'An error occurred while fetching the sheet.',
+                });
+            } else {
+                await interaction.reply({
+                    content: 'An error occurred while fetching the sheet.',
+                    ephemeral: true,
+                });
+            }
         }
     },
 });
