@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "refresh-discord": "node Discord/bin/commandDeploy.js"
   },
   "type": "module",
   "dependencies": {
