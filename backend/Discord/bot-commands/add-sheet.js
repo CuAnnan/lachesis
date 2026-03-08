@@ -1,6 +1,8 @@
 import pkg from 'discord.js';
 const { SlashCommandBuilder } = pkg;
 
+console.log(SlashCommandBuilder);
+
 import userHash from "./inc/userHashFunction.js";
 import conf from '../../../conf.js';
 
