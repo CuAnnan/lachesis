@@ -1,5 +1,6 @@
 import userHash from "./inc/userHashFunction.js";
-import {SlashCommandBuilder, MessageFlags} from 'discord.js';
+import pkg from 'discord.js';
+const {SlashCommandBuilder, MessageFlags} = pkg;
 
 
 

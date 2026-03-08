@@ -1,6 +1,7 @@
 import userHash from "./inc/userHashFunction.js";
-import {SlashCommandBuilder, MessageFlags} from 'discord.js';
+import pkg from 'discord.js';
 import conf from '../../../conf.js';
+const {SlashCommandBuilder, MessageFlags} = pkg;
 
 
 export default({controller})=>({
