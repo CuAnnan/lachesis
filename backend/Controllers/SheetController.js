@@ -146,7 +146,7 @@ class SheetController extends Controller
 
     async addSheetFromGoogle({hash, guildId, sheet})
     {
-        const sheetDocument = {digest:hash, guildId, nanoid:nanoid(), sheet:{...blankSheetSchema, name}};
+        const sheetDocument = {digest:hash, guildId, nanoid:nanoid(), sheet};
         await this.collection.insertOne(sheetDocument);
         return sheetDocument.nanoid;
     }
