@@ -1,5 +1,5 @@
 import KithainSheet from './KithainSheet.js';
-import jsdom from "jsdom";
+import { JSDOM } from 'jsdom';
 
 import {Art, Attribute, Background, Glamour, Knowledge, Realm, Skill, Talent, Trait, Willpower, Merit, Flaw} from "./Traits.js";
 
@@ -99,7 +99,7 @@ class GoogleKithainSheet extends KithainSheet
 
         let response = await fetch(url);
         let html = await response.text();
-        this.document = new jsdom.JSDOM(html).window.document;
+        this.document = new JSDOM(html).window.document;
 
 
         //console.log(sheet);
