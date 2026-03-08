@@ -1,42 +1,52 @@
+// deploy-commands.js
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import pkg from 'discord.js';
-import conf from '../../../conf.js';
-const {discord} = conf;
-let {clientId, token} = discord;
+import conf from '../../../conf.js'; // adjust if needed
+
+const { discord } = conf;
+const { clientId, token } = discord;
 const { REST, Routes } = pkg;
 
+// Recreate __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-console.log({clientId, token});
+console.log({ clientId, token });
 
+// Array to hold command data
 const commands = [];
-// Grab all the command files from the commands directory you created earlier
-const commandFiles = fs.readdirSync('./bot-commands').filter(file => file.endsWith('.js'));
 
-// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
+// Read all command files from the bot-commands folder
+const commandsDir = path.join(__dirname, 'bot-commands');
+const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
+
+// Dynamically import each command module
 for (const file of commandFiles) {
-    const module = await(import(`../bot-commands/${file}`));
+    const modulePath = path.join(commandsDir, file);
+    const module = await import(modulePath);
     const command = module.default({});
-    commands.push(command.data.toJSON());
+    if (command && command.data && typeof command.data.toJSON === 'function') {
+        commands.push(command.data.toJSON());
+    }
 }
 
-
-// Construct and prepare an instance of the REST module
+// Create REST instance and set token
 const rest = new REST().setToken(token);
 
-// and deploy your commands!
+// Deploy commands
 (async () => {
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
-        // The put method is used to fully refresh all commands in the guild with the current set
         const data = await rest.put(
             Routes.applicationCommands(clientId),
-            { body: commands },
+            { body: commands }
         );
-        
+
         console.log(`Successfully reloaded ${data.length} application (/) commands.`);
     } catch (error) {
-        // And of course, make sure you catch and log any errors!
-        console.error(error);
+        console.error('Error deploying commands:', error);
     }
 })();
