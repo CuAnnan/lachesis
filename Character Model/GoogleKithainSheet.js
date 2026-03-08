@@ -71,8 +71,17 @@ class GoogleKithainSheet extends KithainSheet
     }
 
     static extractTrait(traitConstructor, cells, offset) {
-        let name = cells[offset].textContent.replace(/\u00A0/g, ' ').trim()
-        if(name === '') return null;
+        const rawName = cells?.[offset]?.textContent ?? '';
+        const name = rawName
+            .replace(/[\u00A0\u200B\u200C\u200D\u2060\uFEFF]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        if(!name)
+        {
+            return null;
+        }
+
         let trait = new traitConstructor(
             name,
             Number(cells?.[3 + offset]?.textContent?.trim() ?? 0),
