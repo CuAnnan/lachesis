@@ -92,6 +92,7 @@ class SheetController extends Controller
         let arts = [];
         for (const knownArt of Object.values(sheet.structuredTraits.art)) {
             let art = { name: knownArt.name, cantrips: [] };
+            console.log(art.name);
             let artData = await this.db.collection('arts').findOne({ name: art.name });
             if(!artData)
             {
