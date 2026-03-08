@@ -1,5 +1,6 @@
 import pkg from 'discord.js';
 const { SlashCommandBuilder } = pkg;
+import {JSDOM} from 'jsdom';
 
 import userHash from "./inc/userHashFunction.js";
 import GoogleKithainSheet from "../../../Character Model/GoogleKithainSheet.js";
@@ -22,7 +23,7 @@ export default ({ controller }) => ({
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            const sheet = await GoogleKithainSheet.fromGoogleSheetsURL(url);
+            const sheet = await GoogleKithainSheet.fromGoogleSheetsURL(url, JSDOM);
             const result = await controller.addSheetFromGoogle({ hash, guildId: interaction.guildId, sheet });
 
             await interaction.editReply({
