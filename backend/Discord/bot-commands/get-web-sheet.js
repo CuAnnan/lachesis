@@ -4,9 +4,6 @@ const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
 import userHash from "./inc/userHashFunction.js";
 import conf from '../../../conf.js';
 
-const flags = InteractionResponseFlags.Ephemeral;
-
-
 export default ({ controller }) => ({
     data: new SlashCommandBuilder()
         .setName('get-web-sheet')
@@ -26,7 +23,7 @@ export default ({ controller }) => ({
 
             await interaction.reply({
                 content: `Your web sheet can be found at ${conf.frontend.url}/characters/${nanoid}/view`,
-                ephemeral: true
+                flags: InteractionResponseFlags.Ephemeral,
             });
 
             console.log("response sent");
@@ -34,7 +31,7 @@ export default ({ controller }) => ({
             console.error(err);
             await interaction.reply({
                 content: `You have no sheet on this server with that id`,
-                flags
+                flags: InteractionResponseFlags.Ephemeral,
             });
         }
     },

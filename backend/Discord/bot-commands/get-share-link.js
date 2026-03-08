@@ -4,8 +4,6 @@ const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
 import userHash from "./inc/userHashFunction.js";
 import conf from '../../../conf.js';
 
-const flags = InteractionResponseFlags.Ephemeral;
-
 export default ({ controller }) => ({
     data: new SlashCommandBuilder()
         .setName('get-share-link')
@@ -27,7 +25,7 @@ export default ({ controller }) => ({
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({ content, flags });
             } else {
-                await interaction.reply({ content, flags });
+                await interaction.reply({ content, flags: InteractionResponseFlags.Ephemeral, });
             }
 
             console.log("response sent");
@@ -36,9 +34,9 @@ export default ({ controller }) => ({
             const errMsg = `You have no sheet on this server with that id`;
 
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: errMsg, flags });
+                await interaction.followUp({ content: errMsg, flags: InteractionResponseFlags.Ephemeral, });
             } else {
-                await interaction.reply({ content: errMsg, flags});
+                await interaction.reply({ content: errMsg, flags: InteractionResponseFlags.Ephemeral,});
             }
         }
     },

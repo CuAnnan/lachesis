@@ -3,9 +3,6 @@ const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
 
 import userHash from "./inc/userHashFunction.js";
 
-const flags = InteractionResponseFlags.Ephemeral;
-
-
 export default ({ controller }) => ({
     data: new SlashCommandBuilder()
         .setName('load-character')
@@ -24,13 +21,13 @@ export default ({ controller }) => ({
             const data = await controller.getSheetByHashAndNanoid({ hash, nanoid });
             await interaction.reply({
                 content: `The sheet for ${data.name} has been loaded as your current sheet`,
-                flags
+                flags: InteractionResponseFlags.Ephemeral,
             });
         } catch (err) {
             console.error(err);
             await interaction.reply({
                 content: `You have no sheet on this server with that id`,
-                flags
+                flags: InteractionResponseFlags.Ephemeral,
             });
         }
     },
