@@ -2,7 +2,7 @@ import Sheet from './Sheet.js';
 
 import {Trait, Attribute, Talent, Skill, Knowledge, Art, Realm, Background, Glamour, Willpower, Merit, Flaw} from './Traits.js';
 
-const constructors = {Trait, Attribute, Talent, Skill, Knowledge, Art, Realm, Background, Glamour, Willpower, Merit, Flaw};
+const constructors = {trait:Trait, attribute:Attribute, talent:Talent, skill:Skill, knowledge:Knowledge, art:Art, realm:Realm, background:Background, glamour:Glamour, willpower:Willpower, merit:Merit, flaw:Flaw};
 
 class KithainSheet extends Sheet
 {
@@ -90,7 +90,7 @@ class KithainSheet extends Sheet
 
     addTraitFromJSON(traitJSON)
     {
-        let constructor = constructors[traitJSON.type];
+        let constructor = constructors[traitJSON.type.toLowerCase()];
         if(typeof constructor === 'undefined')
         {
             console.log(traitJSON);
