@@ -56,6 +56,8 @@ class GoogleKithainSheet extends KithainSheet
         let art = this.extractTrait(Art, cells, 7);
         let realm = this.extractTrait(Realm, cells, 14);
 
+        console.log(art);
+
         return [background, art, realm];
     }
 
