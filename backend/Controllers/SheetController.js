@@ -146,7 +146,20 @@ class SheetController extends Controller
 
     async addSheetFromGoogle({hash, guildId, sheet})
     {
-        const sheetDocument = {digest:hash, guildId, nanoid:nanoid(), sheet};
+        let importedSheet = sheet;
+        if(importedSheet && typeof importedSheet.toJSON === 'function')
+        {
+            importedSheet = importedSheet.toJSON();
+        }
+
+        if(!importedSheet || !Array.isArray(importedSheet.traits))
+        {
+            throw new Error('Imported sheet is invalid: expected a JSON sheet with a traits array');
+        }
+
+        // Normalize through model serialization so persisted imports always match the expected storage format.
+        const normalizedSheet = (await KithainSheet.fromJSON(importedSheet)).toJSON();
+        const sheetDocument = {digest:hash, guildId, nanoid:nanoid(), sheet:normalizedSheet};
         await this.collection.insertOne(sheetDocument);
         return sheetDocument.nanoid;
     }

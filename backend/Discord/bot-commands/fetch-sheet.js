@@ -24,7 +24,7 @@ export default ({ controller }) => ({
             await interaction.deferReply({ ephemeral: true });
 
             const sheet = await GoogleKithainSheet.fromGoogleSheetsURL(url, (html) => new JSDOM(html).window.document);
-            const result = await controller.addSheetFromGoogle({ hash, guildId: interaction.guildId, sheet:sheet.toJSON() });
+            const result = await controller.addSheetFromGoogle({ hash, guildId: interaction.guildId, sheet });
 
             await interaction.editReply({
                 content: `Your character ${sheet.name} has been added. They can be found at ${conf.frontend.url}/character/${result}/view`
