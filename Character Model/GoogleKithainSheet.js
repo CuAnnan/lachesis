@@ -81,7 +81,7 @@ class GoogleKithainSheet extends KithainSheet
         return trait;
     }
 
-    static async fromGoogleSheetsURL(url, JSDOM)
+    static async fromGoogleSheetsURL(url, parseResponse)
     {
         let sheet = new this();
 
@@ -98,7 +98,8 @@ class GoogleKithainSheet extends KithainSheet
 
         let response = await fetch(url);
         let html = await response.text();
-        this.document = new JSDOM(html).window.document;
+
+        this.document = parseResponse(html);
 
 
         //console.log(sheet);

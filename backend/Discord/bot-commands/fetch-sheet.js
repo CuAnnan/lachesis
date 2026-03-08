@@ -23,7 +23,7 @@ export default ({ controller }) => ({
         try {
             await interaction.deferReply({ ephemeral: true });
 
-            const sheet = await GoogleKithainSheet.fromGoogleSheetsURL(url, JSDOM);
+            const sheet = await GoogleKithainSheet.fromGoogleSheetsURL(url, (html) => new JSDOM(html).window.document);
             const result = await controller.addSheetFromGoogle({ hash, guildId: interaction.guildId, sheet });
 
             await interaction.editReply({
