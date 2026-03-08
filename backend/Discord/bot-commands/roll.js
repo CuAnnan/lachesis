@@ -1,7 +1,4 @@
-import pkg from 'discord.js';
-const {SlashCommandBuilder, MessageFlags} = pkg;
-
-
+import { SlashCommandBuilder } from 'discord.js';
 import userHash from "./inc/userHashFunction.js";
 import rollParser from "./inc/poolParser.js";
 
@@ -10,8 +7,7 @@ let helpText = '***roll syntax***\n\n\
 `/roll <Trait>` + <Trait>[ + <Trait>....] This will roll a pool of dice made up of the values of the given traits. eg. `/roll Perception + Kenning` will roll your pool for Perception + Kenning.\n\
 `/roll <Pool> vs <diff>` this allows you to specify what difficulty to roll a pool at. If no difficulty is provided, the difficulty will be 6';
 
-
-export default({controller, DiceRoll})=> ({
+export default ({ controller, DiceRoll }) => ({
     data: new SlashCommandBuilder()
         .setName('roll')
         .setDescription("Roll some dice")
@@ -19,63 +15,53 @@ export default({controller, DiceRoll})=> ({
             option
                 .setName('pool')
                 .setDescription("The pool to roll. For syntax just enter help")
-                .setRequired(true))
+                .setRequired(true)
+        )
         .addStringOption(option =>
             option
                 .setName('modifiers')
-                .setDescription('A space separated list of modifiers. "wi" or "willpower", "wy" or "wyrd", "spec" or "specialty"'))
-    ,
+                .setDescription('A space separated list of modifiers. "wi" or "willpower", "wy" or "wyrd", "spec" or "specialty"')
+        ),
     async execute(interaction) {
         let poolData = null;
-        let {parts, diff, mods} = rollParser(interaction, helpText);
+        let { parts, diff, mods } = rollParser(interaction, helpText);
 
-        if(Number.isNaN(parseInt(parts)))
-        {
-            diff = diff?parseInt(diff):6;
-            let poolArray = parts.split('+');
+        if (Number.isNaN(parseInt(parts))) {
+            diff = diff ? parseInt(diff) : 6;
+            const poolArray = parts.split('+').map(part => part.trim());
 
-            let poolParts = [];
-            for(let part of poolArray)
-            {
-                poolParts.push(part.trim());
-            }
-
-            try
-            {
-                let hashHex = await userHash(interaction);
-                let sheet = await controller.getSheetByDigest(hashHex);
-                poolData = sheet.getPool(poolParts);
-            }
-            catch(e)
-            {
-                await interaction.reply({content:e.message, flags: MessageFlags.Ephemeral});
+            try {
+                const hashHex = await userHash(interaction);
+                const sheet = await controller.getSheetByDigest(hashHex);
+                poolData = sheet.getPool(poolArray);
+            } catch (e) {
+                await interaction.reply({ content: e.message, ephemeral: true });
                 return;
             }
-        }
-        else
-        {
-            poolData = {traits: [parts], dicePool:parseInt(parts)};
+        } else {
+            poolData = { traits: [parts], dicePool: parseInt(parts) };
         }
 
-        let pool = Object.assign({}, poolData, mods)
+        const pool = Object.assign({}, poolData, mods);
         pool.diff = diff;
-        let roll = new DiceRoll(pool);
-        if(roll.dicePool >= 100)
-        {
-            await interaction.reply({content:'Your dice cup runneth over.', flags: MessageFlags.Ephemeral});
+        const roll = new DiceRoll(pool);
+
+        if (roll.dicePool >= 100) {
+            await interaction.reply({ content: 'Your dice cup runneth over.', ephemeral: true });
             return;
         }
 
-        let result = roll.resolve();
-        let dice = result.faces.sort((a,b)=>a-b).map((x)=>x === 1?`__*${x}*__`:(x >= roll.diff?`**${x}**`:x));
+        const result = roll.resolve();
+        const dice = result.faces
+            .sort((a, b) => a - b)
+            .map(x => (x === 1 ? `__*${x}*__` : x >= roll.diff ? `**${x}**` : x));
 
         let content = `**Pool:** ${roll.traits.join(' + ')}\n**Difficulty:** ${roll.diff}`;
-        if(result.willpower) content += `\n**Willpower used**`;
-        if(result.wyrd) content += `\n**Wyrd roll**`;
-        if(result.specialty) content += `\n**Specialty roll**`;
-
+        if (result.willpower) content += `\n**Willpower used**`;
+        if (result.wyrd) content += `\n**Wyrd roll**`;
+        if (result.specialty) content += `\n**Specialty roll**`;
         content += `\n**Result:** ${result.result}\n**Dice:** ${dice.join(" ")}\n**Successes:** ${result.successes}`;
 
-        interaction.reply({content});
+        await interaction.reply({ content, ephemeral: true });
     },
 });

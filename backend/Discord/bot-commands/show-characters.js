@@ -1,29 +1,40 @@
-import pkg from 'discord.js';
-const {SlashCommandBuilder, MessageFlags} = pkg;
+import { SlashCommandBuilder } from 'discord.js';
+import userHash from "./inc/userHashFunction.js";
 
-
-
-export default({controller})=>({
+export default ({ controller }) => ({
     data: new SlashCommandBuilder()
         .setName('show-characters')
-        .setDescription("Show the characters you have on this server")
-    ,
+        .setDescription("Show the characters you have on this server"),
     async execute(interaction) {
         console.log("Have command");
-        const hashHex = await userHash(interaction);
+        try {
+            const hashHex = await userHash(interaction);
+            const sheets = await controller.getSheetsByHash(hashHex);
 
-        controller.getSheetsByHash(hashHex).then(sheets=>{
-            let sheetsList  = "";
-            for(const sheet of sheets)
-            {
-                sheetsList += `* ${sheet.sheet.name}: ${sheet.nanoid}\n`;
+            if (!sheets || sheets.length === 0) {
+                await interaction.reply({
+                    content: "You have no sheets on this server",
+                    ephemeral: true
+                });
+                return;
             }
-            interaction.reply({content:`Your sheets on this server are\n${sheetsList}`, flags: MessageFlags.Ephemeral});
-        }).catch(error=>{
-            console.log(error);
-            interaction.reply({content:`Your have no sheets on this server`, flags: MessageFlags.Ephemeral});
-        });
 
-        console.log("response sent");
+            const sheetsList = sheets
+                .map(sheet => `* ${sheet.sheet.name}: ${sheet.nanoid}`)
+                .join("\n");
+
+            await interaction.reply({
+                content: `Your sheets on this server are\n${sheetsList}`,
+                ephemeral: true
+            });
+
+            console.log("response sent");
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({
+                content: "You have no sheets on this server",
+                ephemeral: true
+            });
+        }
     },
 });

@@ -1,10 +1,8 @@
+import { SlashCommandBuilder } from 'discord.js';
 import userHash from "./inc/userHashFunction.js";
-import pkg from 'discord.js';
 import conf from '../../../conf.js';
-const {SlashCommandBuilder, MessageFlags} = pkg;
 
-
-export default({controller})=>({
+export default ({ controller }) => ({
     data: new SlashCommandBuilder()
         .setName('get-share-link')
         .setDescription("Generate a share link for your character, all characters can be found with /show-characters.")
@@ -12,8 +10,8 @@ export default({controller})=>({
             option
                 .setName('nanoid')
                 .setDescription("The unique id of the pc to fetch")
-                .setRequired(true))
-    ,
+                .setRequired(true)
+        ),
     async execute(interaction) {
         try {
             const hash = await userHash(interaction);
@@ -23,23 +21,21 @@ export default({controller})=>({
             const content = `The share view for your web sheet can be found at ${conf.frontend.url}/characters/${sharedId}/share`;
 
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content, flags: MessageFlags.Ephemeral});
+                await interaction.followUp({ content, ephemeral: true });
             } else {
-                await interaction.reply({ content, flags: MessageFlags.Ephemeral});
+                await interaction.reply({ content, ephemeral: true });
             }
 
             console.log("response sent");
-        }catch(err)
-        {
+        } catch (err) {
             console.error(err);
             const errMsg = `You have no sheet on this server with that id`;
+
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: errMsg, flags: MessageFlags.Ephemeral});
+                await interaction.followUp({ content: errMsg, ephemeral: true });
             } else {
-                await interaction.reply({ content: errMsg, flags: MessageFlags.Ephemeral});
+                await interaction.reply({ content: errMsg, ephemeral: true });
             }
-
         }
-
     },
 });
