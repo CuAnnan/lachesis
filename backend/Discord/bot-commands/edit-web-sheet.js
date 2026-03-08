@@ -1,5 +1,5 @@
 import pkg from 'discord.js';
-const { SlashCommandBuilder } = pkg;
+const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
 
 import userHash from "./inc/userHashFunction.js";
 import conf from '../../../conf.js';
@@ -22,13 +22,13 @@ export default ({ controller }) => ({
             await controller.getSheetByHashAndNanoid({ hash, nanoid });
             await interaction.reply({
                 content: `Your web sheet can be found at ${conf.frontend.url}/characters/${nanoid}/edit`,
-                ephemeral: true
+                flags: InteractionResponseFlags.Ephemeral,
             });
         } catch (err) {
             console.error(err);
             await interaction.reply({
                 content: `You have no sheet on this server with that id`,
-                ephemeral: true
+                flags: InteractionResponseFlags.Ephemeral,
             });
         }
 

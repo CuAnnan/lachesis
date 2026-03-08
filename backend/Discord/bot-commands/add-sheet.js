@@ -1,5 +1,5 @@
 import pkg from 'discord.js';
-const {SlashCommandBuilder} = pkg;
+const {SlashCommandBuilder, InteractionResponseFlags } = pkg;
 
 import userHash from "./inc/userHashFunction.js";
 import conf from '../../../conf.js';
@@ -22,13 +22,13 @@ export default ({ controller }) => ({
             const result = await controller.addSheet({ hash, guildId: interaction.guildId, name });
             await interaction.reply({
                 content: `Your character ${name} has been added. They can be found at ${conf.frontend.url}/character/${result}/view`,
-                ephemeral: true
+                flags: InteractionResponseFlags.Ephemeral,
             });
         } catch (err) {
             console.error(err);
             await interaction.reply({
                 content: "Failed to add character.",
-                ephemeral: true
+                flags: InteractionResponseFlags.Ephemeral,
             });
         }
     },

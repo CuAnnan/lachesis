@@ -1,5 +1,5 @@
 import pkg from 'discord.js';
-const { SlashCommandBuilder } = pkg;
+const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
 import { JSDOM } from 'jsdom';
 
 import userHash from "./inc/userHashFunction.js";
@@ -26,13 +26,13 @@ export default ({ controller }) => ({
 
             await interaction.reply({
                 content: `Your character ${sheet.name} has been added. They can be found at ${conf.frontend.url}/character/${result}/view`,
-                ephemeral: true
+                flags: InteractionResponseFlags.Ephemeral,
             });
         } catch (err) {
             console.error(err);
             await interaction.reply({
                 content: "Failed to fetch or add the sheet. Make sure the URL is correct and published to the web.",
-                ephemeral: true
+                flags: InteractionResponseFlags.Ephemeral,
             });
         }
     },

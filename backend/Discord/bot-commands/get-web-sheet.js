@@ -1,8 +1,11 @@
 import pkg from 'discord.js';
-const { SlashCommandBuilder } = pkg;
+const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
 
 import userHash from "./inc/userHashFunction.js";
 import conf from '../../../conf.js';
+
+const flags = InteractionResponseFlags.Ephemeral;
+
 
 export default ({ controller }) => ({
     data: new SlashCommandBuilder()
@@ -31,7 +34,7 @@ export default ({ controller }) => ({
             console.error(err);
             await interaction.reply({
                 content: `You have no sheet on this server with that id`,
-                ephemeral: true
+                flags
             });
         }
     },
