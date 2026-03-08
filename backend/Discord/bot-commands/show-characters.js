@@ -1,4 +1,5 @@
-import { SlashCommandBuilder } from 'discord.js';
+import pkg from 'discord.js';
+const { SlashCommandBuilder } = pkg;
 import userHash from "./inc/userHashFunction.js";
 
 export default ({ controller }) => ({
@@ -6,7 +7,6 @@ export default ({ controller }) => ({
         .setName('show-characters')
         .setDescription("Show the characters you have on this server"),
     async execute(interaction) {
-        console.log("Have command");
         try {
             const hashHex = await userHash(interaction);
             const sheets = await controller.getSheetsByHash(hashHex);
@@ -27,8 +27,6 @@ export default ({ controller }) => ({
                 content: `Your sheets on this server are\n${sheetsList}`,
                 ephemeral: true
             });
-
-            console.log("response sent");
         } catch (error) {
             console.error(error);
             await interaction.reply({
