@@ -1,6 +1,5 @@
 import pkg from 'discord.js';
-const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
-import { JSDOM } from 'jsdom';
+const { SlashCommandBuilder } = pkg;
 
 import userHash from "./inc/userHashFunction.js";
 import GoogleKithainSheet from "../../../Character Model/GoogleKithainSheet.js";
@@ -21,18 +20,18 @@ export default ({ controller }) => ({
         const url = interaction.options.getString('url');
 
         try {
-            const sheet = await GoogleKithainSheet.fromGoogleSheetsURL(url, JSDOM);
+            const sheet = await GoogleKithainSheet.fromGoogleSheetsURL(url);
             const result = await controller.addSheetFromGoogle({ hash, guildId: interaction.guildId, sheet });
 
             await interaction.reply({
                 content: `Your character ${sheet.name} has been added. They can be found at ${conf.frontend.url}/character/${result}/view`,
-                flags: InteractionResponseFlags.Ephemeral,
+                ephemeral: true
             });
         } catch (err) {
             console.error(err);
             await interaction.reply({
                 content: "Failed to fetch or add the sheet. Make sure the URL is correct and published to the web.",
-                flags: InteractionResponseFlags.Ephemeral,
+                ephemeral: true
             });
         }
     },

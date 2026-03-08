@@ -1,5 +1,5 @@
 import pkg from 'discord.js';
-const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
+const { SlashCommandBuilder } = pkg;
 
 import userHash from "./inc/userHashFunction.js";
 import conf from '../../../conf.js';
@@ -23,9 +23,9 @@ export default ({ controller }) => ({
             const content = `The share view for your web sheet can be found at ${conf.frontend.url}/characters/${sharedId}/share`;
 
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content, flags });
+                await interaction.followUp({ content, ephemeral: true });
             } else {
-                await interaction.reply({ content, flags: InteractionResponseFlags.Ephemeral, });
+                await interaction.reply({ content, ephemeral: true });
             }
 
             console.log("response sent");
@@ -34,9 +34,9 @@ export default ({ controller }) => ({
             const errMsg = `You have no sheet on this server with that id`;
 
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: errMsg, flags: InteractionResponseFlags.Ephemeral, });
+                await interaction.followUp({ content: errMsg, ephemeral: true });
             } else {
-                await interaction.reply({ content: errMsg, flags: InteractionResponseFlags.Ephemeral,});
+                await interaction.reply({ content: errMsg, ephemeral: true });
             }
         }
     },

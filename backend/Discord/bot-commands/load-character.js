@@ -1,5 +1,5 @@
 import pkg from 'discord.js';
-const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
+const { SlashCommandBuilder } = pkg;
 
 import userHash from "./inc/userHashFunction.js";
 
@@ -21,13 +21,13 @@ export default ({ controller }) => ({
             const data = await controller.getSheetByHashAndNanoid({ hash, nanoid });
             await interaction.reply({
                 content: `The sheet for ${data.name} has been loaded as your current sheet`,
-                flags: InteractionResponseFlags.Ephemeral,
+                ephemeral: true
             });
         } catch (err) {
             console.error(err);
             await interaction.reply({
                 content: `You have no sheet on this server with that id`,
-                flags: InteractionResponseFlags.Ephemeral,
+                ephemeral: true
             });
         }
     },

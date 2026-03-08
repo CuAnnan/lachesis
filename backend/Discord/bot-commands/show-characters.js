@@ -1,8 +1,6 @@
 import pkg from 'discord.js';
-const { SlashCommandBuilder, InteractionResponseFlags } = pkg;
+const { SlashCommandBuilder } = pkg;
 import userHash from "./inc/userHashFunction.js";
-
-
 
 export default ({ controller }) => ({
     data: new SlashCommandBuilder()
@@ -16,7 +14,7 @@ export default ({ controller }) => ({
             if (!sheets || sheets.length === 0) {
                 await interaction.reply({
                     content: "You have no sheets on this server",
-                    flags: InteractionResponseFlags.Ephemeral,
+                    ephemeral: true
                 });
                 return;
             }
@@ -27,13 +25,13 @@ export default ({ controller }) => ({
 
             await interaction.reply({
                 content: `Your sheets on this server are\n${sheetsList}`,
-                flags: InteractionResponseFlags.Ephemeral,
+                ephemeral: true
             });
         } catch (error) {
             console.error(error);
             await interaction.reply({
                 content: "You have no sheets on this server",
-                flags: InteractionResponseFlags.Ephemeral,
+                ephemeral: true
             });
         }
     },
