@@ -19,7 +19,7 @@ console.log({ clientId, token });
 const commands = [];
 
 // Read all command files from the bot-commands folder
-const commandsDir = path.join(__dirname, '/Discord/bot-commands');
+const commandsDir = path.join(__dirname, '../bot-commands');
 const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
 
 // Dynamically import each command module
