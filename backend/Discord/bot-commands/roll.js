@@ -1,4 +1,6 @@
-import { SlashCommandBuilder } from 'discord.js';
+import pkg from 'discord.js';
+const { SlashCommandBuilder } = pkg;
+
 import userHash from "./inc/userHashFunction.js";
 import rollParser from "./inc/poolParser.js";
 
