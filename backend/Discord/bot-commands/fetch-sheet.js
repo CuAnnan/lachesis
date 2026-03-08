@@ -1,6 +1,6 @@
 import userHash from "./inc/userHashFunction.js";
 import {SlashCommandBuilder, MessageFlags} from 'discord.js';
-import GoogleKithainSheet from "/../Character Model/GoogleKithainSheet.js";
+import GoogleKithainSheet from "../../../Character Model/GoogleKithainSheet.js";
 import conf from "../../../conf.js";
 
 
