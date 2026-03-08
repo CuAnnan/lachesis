@@ -1,8 +1,10 @@
 import fs from 'fs';
-import { REST, Routes } from 'discord.js';
+import pkg from 'discord.js';
 import conf from '../../../conf.js';
 const {discord} = conf;
 let {clientId, token} = discord;
+const { REST, Routes } = pkg;
+
 
 console.log({clientId, token});
 
