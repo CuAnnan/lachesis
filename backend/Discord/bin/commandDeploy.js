@@ -1,7 +1,7 @@
 // deploy-commands.js
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import pkg from 'discord.js';
 import conf from '../../../conf.js'; // adjust if needed
 
@@ -19,13 +19,13 @@ console.log({ clientId, token });
 const commands = [];
 
 // Read all command files from the bot-commands folder
-const commandsDir = path.join(__dirname, '../bot-commands');
+const commandsDir = fileURLToPath(new URL('../bot-commands/', import.meta.url));
 const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
 
 // Dynamically import each command module
 for (const file of commandFiles) {
     const modulePath = path.join(commandsDir, file);
-    const module = await import(modulePath);
+    const module = await import(pathToFileURL(modulePath).href);
     const command = module.default({});
     if (command && command.data && typeof command.data.toJSON === 'function') {
         commands.push(command.data.toJSON());
