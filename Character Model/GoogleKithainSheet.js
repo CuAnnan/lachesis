@@ -1,5 +1,4 @@
 import KithainSheet from './KithainSheet.js';
-import fetch from "node-fetch";
 import jsdom from "jsdom";
 
 import {Art, Attribute, Background, Glamour, Knowledge, Realm, Skill, Talent, Trait, Willpower, Merit, Flaw} from "./Traits.js";
