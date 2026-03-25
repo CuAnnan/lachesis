@@ -102,10 +102,13 @@ class SheetController extends Controller
                 const escapedName = art.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 artData = await this.db.collection('arts').findOne({name:{$regex:new RegExp(`^${escapedName}$`, 'i')}});
             }
-            if(!artData)
+            // Populate cantrips when art data was found. Previously this used the inverted condition which
+            // resulted in artData being absent and thus no cantrips being added.
+            if(artData)
             {
-                const levels = Array.isArray(artData?.levels) ? artData.levels : [];
-                for (let i = 0; i < knownArt.level; i++) {
+                const levelCount = Number(knownArt.level) || 0;
+                const levels = Array.isArray(artData.levels) ? artData.levels : [];
+                for (let i = 0; i < levelCount; i++) {
                     if (levels[i]) {
                         art.cantrips.push(levels[i]);
                     }
@@ -115,8 +118,6 @@ class SheetController extends Controller
         }
         return {kith, house, arts};
     }
-
-
 
     async getSheetsByHash(hash)
     {
